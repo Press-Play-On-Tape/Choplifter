@@ -237,10 +237,6 @@ void playerMovements() {
         incX = DELTA_X_INCREASE;
         break;
 
-      case 10:
-        incX = DELTA_X_DO_NOTHING;
-        break;
-
       default: break;
       
     }
