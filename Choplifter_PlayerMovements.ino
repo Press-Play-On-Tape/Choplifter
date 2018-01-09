@@ -205,36 +205,36 @@ void playerMovements() {
 
       case 12:
         playerStack.push(10, 11);
-        incX = DELTA_X_INCREASE;
+        if (deltaX != 0) incX = DELTA_X_INCREASE;
         break;
 
       case -12:
         playerStack.push(10, -11);
-        incX = DELTA_X_DECREASE;
+        if (deltaX != 0) incX = DELTA_X_DECREASE;
         break;
 
       case 6:
         playerStack.push(1, 2, 3);
         playerStack.push(4, 5);
-        incX = DELTA_X_INCREASE;
+        if (deltaX != 0) incX = DELTA_X_INCREASE;
         break;
 
       case -6:
         playerStack.push(-1, -2, -3);
         playerStack.push(-4, -5);
-        incX = DELTA_X_DECREASE;
+        if (deltaX != 0) incX = DELTA_X_DECREASE;
         break;
       
       case 17:
         playerStack.push(1, 13, 14);
         playerStack.push(15, 16);
-        incX = DELTA_X_DECREASE;
+        if (deltaX != 0) incX = DELTA_X_DECREASE;
         break;
 
       case -17:
         playerStack.push(-1, -13, -14);
         playerStack.push(-15, -16);
-        incX = DELTA_X_INCREASE;
+        if (deltaX != 0) incX = DELTA_X_INCREASE;
         break;
 
       default: break;
