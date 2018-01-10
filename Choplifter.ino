@@ -251,11 +251,11 @@ void loop() {
           break;
 
         case HOSTAGE_WAVING_11 ... HOSTAGE_WAVING_12:
-          arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 53, hostage_05, WHITE, true);
+          arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 53, hostage_05, WHITE, false);
           break;
 
         case HOSTAGE_WAVING_21 ... HOSTAGE_WAVING_22:
-          arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 53, hostage_06, WHITE, true);
+          arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 53, hostage_06, WHITE, false);
           break;
 
       }
