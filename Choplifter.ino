@@ -1,7 +1,7 @@
 #include "src/utils/Arduboy2Ext.h"
 #include "Enums.h"
 #include "Images.h"
-#include "src/utils/StackArray.h"
+#include "src/utils/Stack.h"
 
 Arduboy2Ext arduboy;
 uint8_t frame = 0;
@@ -16,7 +16,7 @@ uint8_t prevTurn = PREV_TURN_FROM_LEFT;
 int8_t backgroundXOffset = 0;
 int16_t backgroundX = 0;
 
-StackArray <uint8_t> playerStack;
+Stack <uint8_t, 20> playerStack;
 
 Hostage hostages[64];
 Dormitory dormitories[4];
@@ -75,7 +75,8 @@ void loop() {
   if (!playerStack.isEmpty()) {
 
     if (arduboy.everyXFrames(2)) {
-      image = playerStack.pop();
+      image = playerStack.peek();
+      playerStack.drop();
     }
 
   }
