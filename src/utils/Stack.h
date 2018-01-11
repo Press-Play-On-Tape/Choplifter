@@ -30,17 +30,17 @@ public:
 	bool isEmpty(void) const; // O(1)
 	bool isFull(void) const; // O(1)
 
-	IndexType GetCount(void) const; // O(1)
-	constexpr IndexType GetCapacity(void) const; // O(1)
+	IndexType getCount(void) const; // O(1)
+	constexpr IndexType getCapacity(void) const; // O(1)
 
 	ItemType & peek(void); // O(1)
 	const ItemType & peek(void) const; // O(1)
+	bool insert(const ItemType & item); // O(1)
 	bool push(const ItemType & item); // O(1)
 	bool push(ItemType && item); // O(1)
 	bool push(ItemType && item1, ItemType && item2); // O(1)
 	bool push(ItemType && item1, ItemType && item2, ItemType && item3); // O(1)
 	ItemType & pop(void); // O(1)
-	const ItemType & pop(void) const; // O(1)
 
 	void drop(void); // O(1)
 
@@ -74,17 +74,17 @@ bool Stack< Type, Capacity >::isEmpty(void) const // O(1)
 template< typename Type, uint8_t Capacity >
 bool Stack< Type, Capacity >::isFull(void) const // O(1)
 {
-	return (this->next == this->GetCapacity());
+	return (this->next == this->getCapacity());
 }
 
 template< typename Type, uint8_t Capacity >
-typename Stack< Type, Capacity >::IndexType Stack< Type, Capacity >::GetCount(void) const // O(1)
+typename Stack< Type, Capacity >::IndexType Stack< Type, Capacity >::getCount(void) const // O(1)
 {
 	return this->next;
 }
 
 template< typename Type, uint8_t Capacity >
-constexpr typename Stack< Type, Capacity >::IndexType Stack< Type, Capacity >::GetCapacity(void) const // O(1)
+constexpr typename Stack< Type, Capacity >::IndexType Stack< Type, Capacity >::getCapacity(void) const // O(1)
 {
 	return static_cast<IndexType>(Capacity);
 }
@@ -102,21 +102,28 @@ const typename Stack< Type, Capacity >::ItemType & Stack< Type, Capacity >::peek
 }
 
 template< typename Type, uint8_t Capacity >
-typename Stack< Type, Capacity >::ItemType & Stack< Type, Capacity >::pop(void) // O(1)
+typename Stack< Type, Capacity >::ItemType & Stack< Type, Capacity >::pop(void)  // O(1)
 {
-   	--this->next;
-	ItemType ret = this->items[this->next];
-	this->items[this->next].~ItemType();
-    return ret;
+	--this->next;
+	return this->items[this->next];
 }
 
 template< typename Type, uint8_t Capacity >
-const typename Stack< Type, Capacity >::ItemType & Stack< Type, Capacity >::pop(void) const // O(1)
+bool Stack< Type, Capacity >::insert(const typename Stack< Type, Capacity >::ItemType & item) // O(1)
 {
-   	--this->next;
-    ItemType ret = this->items[this->next];
-	this->items[this->next].~ItemType();
-    return ret;
+
+	if (this->isFull()) return false;
+
+	for (uint8_t i = this->next; i > 0; i--) {
+
+		this->items[i] = this->items[i - 1];
+
+	}
+
+	this->items[0] = item;
+	++this->next;
+	
+	return true;
 }
 
 template< typename Type, uint8_t Capacity >

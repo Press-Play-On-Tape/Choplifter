@@ -75,8 +75,7 @@ void loop() {
   if (!playerStack.isEmpty()) {
 
     if (arduboy.everyXFrames(2)) {
-      image = playerStack.peek();
-      playerStack.drop();
+      image = playerStack.pop();
     }
 
   }
