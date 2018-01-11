@@ -7,7 +7,7 @@ Arduboy2Ext arduboy;
 uint8_t frame = 0;
 int8_t image = 1;
 
-int8_t y = 32;
+int8_t y = 40;
 uint8_t incX = DELTA_X_DO_NOTHING;
 int8_t deltaX = 0;
 int8_t deltaY = 0;
@@ -18,10 +18,13 @@ int16_t backgroundX = 0;
 
 Stack <uint8_t, 20> playerStack;
 
-Hostage hostages[64];
-Dormitory dormitories[4];
+Hostage hostages[NUMBER_OF_HOSTAGES];
+Dormitory dormitories[NUMBER_OF_DORMITORIES];
+Tank tanks[NUMBER_OF_TANKS];
 
-
+uint8_t dead = 0;
+uint8_t safe = 0;
+uint8_t inHeli = 0;
 
 void resetGame() {
 
@@ -33,12 +36,20 @@ void resetGame() {
 
   dormitories[0] = { DORMITORY_STATE_OPEN,    400 };
   dormitories[1] = { DORMITORY_STATE_INTACT,  800 };
-  dormitories[2] = { DORMITORY_STATE_INTACT, 1200 };
-  dormitories[3] = { DORMITORY_STATE_INTACT, 1600 };
+  dormitories[2] = { DORMITORY_STATE_INTACT,  1200 };
+  dormitories[3] = { DORMITORY_STATE_INTACT,  1600 };
+
+  tanks[0] = { 1,  1500 };
+  tanks[1] = { 1,  1900 };
+  tanks[2] = { 1, 2300 };
+  tanks[3] = { 1, 2700 };
+  tanks[4] = { 1, 3100 };
+  tanks[5] = { 1, 3500 };
+  
 
   for (int i = 0; i < 64; i++) {
      
-      hostages[i] = { (i < 16 ? HOSTAGE_LEAVING_DORM : HOSTAGE_IN_DORM), random(0, 256), dormitories[i / 16].xPos };
+      hostages[i] = { (i < 16 ? HOSTAGE_LEAVING_DORM : HOSTAGE_IN_DORM), random(0, 10), dormitories[i / 16].xPos };
 
   }
 
@@ -51,6 +62,7 @@ void resetGame() {
 void setup() {
 
   arduboy.boot();
+  arduboy.flashlight();
   arduboy.setFrameRate(25);
   resetGame();
   
@@ -108,80 +120,162 @@ void loop() {
 
   // Update hostages ..
 
-  int randomTopLimit = 0;
+  uint8_t randomTopLimit = 0;
 
-  for (int i = 0; i < 64; i++) {
+  for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
 
     Hostage *hostage = &hostages[i];
 
-    switch (hostage->stance) {
 
-      case HOSTAGE_RUNNING_LEFT_1:
-      case HOSTAGE_RUNNING_LEFT_2:
-      case HOSTAGE_RUNNING_LEFT_3:
+    // Collect hostages ..
 
-        hostage->stance++;
-        hostage->countDown--;
-        hostage->xPos++;
-        randomTopLimit = HOSTAGE_WAVING_22;
-        break;
+    if (hostage->stance != HOSTAGE_DEAD && hostage->stance <= HOSTAGE_LEAVING_DORM &&
+        backgroundX > 50 && y >= 40 && absT(hostage->xPos - backgroundX) < 5) {    
 
-      case HOSTAGE_RUNNING_LEFT_4:
-
-        hostage->stance = HOSTAGE_RUNNING_LEFT_1;
-        hostage->countDown--;
-        hostage->xPos++;
-        randomTopLimit = HOSTAGE_WAVING_22;
-        break;
-
-      case HOSTAGE_RUNNING_RIGHT_1:
-      case HOSTAGE_RUNNING_RIGHT_2:
-      case HOSTAGE_RUNNING_RIGHT_3:
-
-        hostage->stance++;
-        hostage->countDown--;
-        hostage->xPos--;
-        randomTopLimit = HOSTAGE_WAVING_22;
-        break;
-
-      case HOSTAGE_RUNNING_RIGHT_4:
-
-        hostage->stance = HOSTAGE_RUNNING_RIGHT_1;
-        hostage->countDown--;
-        hostage->xPos--;
-        randomTopLimit = HOSTAGE_WAVING_22;
-        break;
-
-      case HOSTAGE_WAVING_11:
-      case HOSTAGE_WAVING_12:
-
-        hostage->stance++;
-        hostage->countDown--;
-        randomTopLimit = HOSTAGE_RUNNING_RIGHT_4;
-        break;
-
-      case HOSTAGE_WAVING_21:
-      case HOSTAGE_WAVING_22:
-
-        hostage->stance++;  
-        if (hostage->stance > HOSTAGE_WAVING_22) hostage->stance = HOSTAGE_WAVING_11;
-        hostage->countDown--;
-        randomTopLimit = HOSTAGE_RUNNING_RIGHT_4;
-        break;
-
-      case HOSTAGE_LEAVING_DORM:
-
-        hostage->countDown--;
-        randomTopLimit = HOSTAGE_RUNNING_RIGHT_4;
-        break;
+      inHeli++;
+      hostage->stance = HOSTAGE_IN_HELICOPTER;
+      hostage->countDown = (14 * inHeli);
 
     }
 
+    // Deposit hostages at base ..
 
-    if (hostage->countDown == 0) {
+    else if (hostage->stance == HOSTAGE_IN_HELICOPTER && 
+             y >= 40 &&                                                                                               
+             ((image == 1 && backgroundX < 24 && backgroundX > -4) || 
+              (image == -1 && backgroundX < 22 && backgroundX > 0) || 
+              (image == 10 && backgroundX < 22 && backgroundX > -12))) {                
 
-      hostage->stance = random(HOSTAGE_RUNNING_LEFT_1, randomTopLimit + 1);
-      hostage->countDown = random(0, 6);
+      hostage->countDown--;
+
+      if (hostage->countDown == 0) {
+
+        hostage->stance = HOSTAGE_RUNNING_RIGHT_1;
+        hostage->countDown = 255;
+        hostage->xPos = backgroundX;
+        inHeli--;
+
+      }
+
+    }
+
+    // Hostages are safe ..
+    
+    else if (hostage->stance != HOSTAGE_SAFE && hostage->xPos < -40) {                                                                                   
+
+        hostage->stance = HOSTAGE_SAFE;
+        safe++;
+
+    }
+
+    // Hostages run wild!
+
+    else {                                                                                                            
+
+      switch (hostage->stance) {
+
+        case HOSTAGE_RUNNING_LEFT_1:
+        case HOSTAGE_RUNNING_LEFT_2:
+        case HOSTAGE_RUNNING_LEFT_3:
+
+          hostage->stance++;
+          hostage->countDown--;
+          hostage->xPos++;
+          randomTopLimit = HOSTAGE_WAVING_22;
+          break;
+
+        case HOSTAGE_RUNNING_LEFT_4:
+
+          hostage->stance = HOSTAGE_RUNNING_LEFT_1;
+          hostage->countDown--;
+          hostage->xPos++;
+          randomTopLimit = HOSTAGE_WAVING_22;
+          break;
+
+        case HOSTAGE_RUNNING_RIGHT_1:
+        case HOSTAGE_RUNNING_RIGHT_2:
+        case HOSTAGE_RUNNING_RIGHT_3:
+
+          hostage->stance++;
+          hostage->countDown--;
+          hostage->xPos--;
+          randomTopLimit = HOSTAGE_WAVING_22;
+          break;
+
+        case HOSTAGE_RUNNING_RIGHT_4:
+
+          hostage->stance = HOSTAGE_RUNNING_RIGHT_1;
+          hostage->countDown--;
+          hostage->xPos--;
+          randomTopLimit = HOSTAGE_WAVING_22;
+          break;
+
+        case HOSTAGE_WAVING_11:
+        case HOSTAGE_WAVING_12:
+
+          hostage->stance++;
+          hostage->countDown--;
+          randomTopLimit = HOSTAGE_RUNNING_RIGHT_4;
+          break;
+
+        case HOSTAGE_WAVING_21:
+        case HOSTAGE_WAVING_22:
+
+          hostage->stance++;  
+          if (hostage->stance > HOSTAGE_WAVING_22) hostage->stance = HOSTAGE_WAVING_11;
+          hostage->countDown--;
+          randomTopLimit = HOSTAGE_RUNNING_RIGHT_4;
+          break;
+
+        case HOSTAGE_LEAVING_DORM:
+
+          hostage->countDown--;
+          if (hostage->countDown == 0) {
+            randomTopLimit = HOSTAGE_RUNNING_RIGHT_4;
+          }
+          break;
+
+      }
+
+
+      if (hostage->countDown == 0) {
+
+        if (absT(hostage->xPos - backgroundX) < 200) {
+
+          if (random(0, 11) < 9) {
+
+            hostage->stance = (hostage->xPos > backgroundX ? HOSTAGE_RUNNING_RIGHT_1 : HOSTAGE_RUNNING_LEFT_1);
+            hostage->countDown = random(5, 10);
+
+          }
+          else {
+
+            hostage->stance = HOSTAGE_WAVING_11;
+            hostage->countDown = random(2, 5);
+
+          }
+
+        }
+        else {
+
+          hostage->stance = random(HOSTAGE_RUNNING_LEFT_1, randomTopLimit + 1);
+
+          switch (hostage->stance) {
+
+            case HOSTAGE_RUNNING_LEFT_1 ... HOSTAGE_RUNNING_RIGHT_4:
+              hostage->countDown = random(1, 21);
+              break;
+
+            case HOSTAGE_WAVING_22 ... HOSTAGE_WAVING_22:
+              hostage->countDown = random(1, 7);
+              break;
+
+
+          }
+
+        }
+
+      }
 
     }
 
@@ -204,15 +298,15 @@ void loop() {
 
   if (backgroundX > -158 && backgroundX < 105) {
 
-    arduboy.fillRect(backgroundX + 91, 42, 42, 8, BLACK);
-    arduboy.drawCompressedMirror(backgroundX + 27, 31, base, WHITE, false);
+    arduboy.fillRect(backgroundX + 90, 43, 42, 9, BLACK);
+    arduboy.drawCompressedMirror(backgroundX + 26, 32, base, WHITE, false);
 
   }
 
 
   // Draw dormitories ..
 
-  for (int i = 0; i < 4; i++) {
+  for (uint8_t i = 0; i < NUMBER_OF_DORMITORIES; i++) {
 
     if ((dormitories[i].xPos > backgroundX - 144) && (dormitories[i].xPos < backgroundX + 144)) {
 
@@ -236,26 +330,26 @@ void loop() {
 
   // Draw hostages ..
 
-  for (int i = 0; i < 64; i++) {
+  for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
     
     if ((hostages[i].xPos > backgroundX - 133) && (hostages[i].xPos < backgroundX + 133)) {
 
       switch (hostages[i].stance) {
 
         case HOSTAGE_RUNNING_LEFT_1 ... HOSTAGE_RUNNING_LEFT_4:
-          arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 53, hostage_images[hostages[i].stance - 1], WHITE, false);
+          arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 48, hostage_images[hostages[i].stance - 1], WHITE, false);
           break;
 
         case HOSTAGE_RUNNING_RIGHT_1 ... HOSTAGE_RUNNING_RIGHT_4:
-          arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 53, hostage_images[hostages[i].stance - 5], WHITE, true);
+          arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 48, hostage_images[hostages[i].stance - 5], WHITE, true);
           break;
 
         case HOSTAGE_WAVING_11 ... HOSTAGE_WAVING_12:
-          arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 53, hostage_05, WHITE, false);
+          arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 48, hostage_05, WHITE, false);
           break;
 
         case HOSTAGE_WAVING_21 ... HOSTAGE_WAVING_22:
-          arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 53, hostage_06, WHITE, false);
+          arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 48, hostage_06, WHITE, false);
           break;
 
       }
@@ -263,6 +357,37 @@ void loop() {
     }
 
   }
+
+
+  drawHelicopter(45, y, image);
+
+  // Draw tanks ..
+
+  for (uint8_t i = 0; i < NUMBER_OF_TANKS; i++) {
+
+    if (tanks[i].state != TANK_STATE_DEAD && (tanks[i].xPos > backgroundX - 144) && (tanks[i].xPos < backgroundX + 144)) {
+
+      arduboy.drawCompressedMirror(backgroundX - tanks[i].xPos + 64 - 15, 47, tank_00_mask, BLACK, false);
+      arduboy.drawCompressedMirror(backgroundX - tanks[i].xPos + 64 - 15, 47, tank_00, WHITE, false);
+
+    }
+
+  }
+
+
+  // Draw scoreboard ..
+
+  arduboy.setCursor(1, 0);
+  arduboy.print(dead);
+  arduboy.setCursor(16, 0);
+  arduboy.print(inHeli);
+  arduboy.setCursor(31, 0);
+  arduboy.print(safe);
+
+//  arduboy.drawCompressedMirror(0, 0, score_left_mask, BLACK, false);
+//  arduboy.drawCompressedMirror(0, 0, score_left, WHITE, false);
+
+
 
   // -- DEBUG -------------------------------------------------------------------------------
 
@@ -293,7 +418,6 @@ void loop() {
 
   // ----------------------------------------------------------------------------------------
 
-  drawHelicopter(45, y, image);
   arduboy.display();
   
 }

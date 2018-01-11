@@ -15,6 +15,18 @@ struct Dormitory {
   int16_t xPos;
 };
 
+struct Tank {
+  uint8_t state;    // 0 .. dead, else angle of turrent
+  int16_t xPos;
+};
+
+
+#define NUMBER_OF_HOSTAGES                  64
+#define NUMBER_OF_DORMITORIES               4
+#define NUMBER_OF_TANKS                     6
+
+#define TANK_STATE_DEAD                     0
+
 #define HELICOPTER_MAXIMUM_HEIGHT           (int8_t)-3
 #define HELICOPTER_MINIMUM_HEIGHT           (int8_t)40
 

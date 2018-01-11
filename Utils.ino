@@ -1,8 +1,12 @@
+/* ----------------------------------------------------------------------------
+ *  A better absolute!
+ */
 template<typename T> T absT(const T & v) {
   
   return (v < 0) ? -v : v;
 
 }
+
 
 /* ----------------------------------------------------------------------------
  *  Draw a horizontal dotted line. 
@@ -18,6 +22,9 @@ void drawHorizontalDottedLine(int x1, int x2, int y) {
 }
 
 
+/* ----------------------------------------------------------------------------
+ *  Slow the helicopter down or speed it up expotentially ..
+ */
 int8_t calcSpeed(int8_t initValue, bool increase) {
       
   switch (initValue) {
@@ -57,6 +64,9 @@ int8_t calcSpeed(int8_t initValue, bool increase) {
 }
 
 
+/* ----------------------------------------------------------------------------
+ *  Draw the helicopter ..
+ */
 void drawHelicopter(uint8_t x, int8_t y, int8_t image) {
 
   uint8_t index = absT(image);
