@@ -4,6 +4,19 @@
 
 #define _DEBUG
 
+struct Bullet {
+  int16_t xPos;
+  uint16_t yPos;
+  int8_t xDelta;
+  uint8_t yDelta;
+};
+
+struct BulletExplosion {
+  int16_t xPos;
+  uint16_t yPos;
+  uint8_t explosionType;
+};
+
 struct Hostage {
   uint8_t stance;   
   uint8_t countDown;
@@ -16,16 +29,31 @@ struct Dormitory {
 };
 
 struct Tank {
-  uint8_t state;    // 0 .. dead, else angle of turrent
+  uint8_t state;    // 0 .. dead, 1 Move Left, 2 Move Right
+  uint8_t turrentDirection;
+  uint8_t countDown;
   int16_t xPos;
+  bool track;
 };
 
+
+#define NUMBER_OF_PLAYER_BULLETS            8
+#define BULLET_INACTIVE_X_VALUE             5000
 
 #define NUMBER_OF_HOSTAGES                  64
 #define NUMBER_OF_DORMITORIES               4
 #define NUMBER_OF_TANKS                     6
 
 #define TANK_STATE_DEAD                     0
+#define TANK_STATE_MOVE_LEFT                1
+#define TANK_STATE_MOVE_RIGHT               2
+#define TANK_STATE_STATIONARY               3
+
+#define TANK_TURRENT_DIR_LEFT_LOW           0
+#define TANK_TURRENT_DIR_LEFT_MID           1
+#define TANK_TURRENT_DIR_UPRIGHT            2
+#define TANK_TURRENT_DIR_RIGHT_MID          3
+#define TANK_TURRENT_DIR_RIGHT_LOW          4
 
 #define HELICOPTER_MAXIMUM_HEIGHT           (int8_t)-3
 #define HELICOPTER_MINIMUM_HEIGHT           (int8_t)40
@@ -34,10 +62,8 @@ struct Tank {
 #define PREV_TURN_FROM_RIGHT                1
 
 #define DELTA_X_DO_NOTHING                  0
-#define DELTA_X_INCREASE /*DELTA_X_INCREASE_TO_ZERO*/            1
-#define DELTA_X_DECREASE /*DELTA_X_DECREASE_TO_ZERO*/            2
-#define DELTA_X_INCREASE                    3
-#define DELTA_X_DECREASE                    4
+#define DELTA_X_INCREASE                    1
+#define DELTA_X_DECREASE                    2
 
 #define DORMITORY_STATE_INTACT              0
 #define DORMITORY_STATE_OPEN                1
@@ -57,5 +83,11 @@ struct Tank {
 #define HOSTAGE_WAVING_22                   12
 #define HOSTAGE_LEAVING_DORM                13
 #define HOSTAGE_DEAD                        14
-#define HOSTAGE_SAFE                        15
-#define HOSTAGE_IN_HELICOPTER               16
+#define HOSTAGE_DYING_1                     15
+#define HOSTAGE_DYING_2                     16
+#define HOSTAGE_SAFE                        17
+#define HOSTAGE_IN_HELICOPTER               18
+#define HOSTAGE_FAR_RIGHT_POS               210
+
+#define EXPLOSION_SML                       1
+#define EXPLOSION_MED                       2

@@ -20,7 +20,9 @@ Stack <uint8_t, 20> playerStack;
 
 Hostage hostages[NUMBER_OF_HOSTAGES];
 Dormitory dormitories[NUMBER_OF_DORMITORIES];
-Tank tanks[NUMBER_OF_TANKS];
+Tank tank;
+Bullet playerBullets[NUMBER_OF_PLAYER_BULLETS];
+BulletExplosion playerBulletExplosion;
 
 uint8_t dead = 0;
 uint8_t safe = 0;
@@ -33,23 +35,25 @@ void resetGame() {
   backgroundXOffset = 0;
   backgroundX = 0;
 
+  playerBulletExplosion.xPos = BULLET_INACTIVE_X_VALUE;
 
   dormitories[0] = { DORMITORY_STATE_OPEN,    400 };
   dormitories[1] = { DORMITORY_STATE_INTACT,  800 };
   dormitories[2] = { DORMITORY_STATE_INTACT,  1200 };
   dormitories[3] = { DORMITORY_STATE_INTACT,  1600 };
 
-  tanks[0] = { 1,  1500 };
-  tanks[1] = { 1,  1900 };
-  tanks[2] = { 1, 2300 };
-  tanks[3] = { 1, 2700 };
-  tanks[4] = { 1, 3100 };
-  tanks[5] = { 1, 3500 };
+  tank = {1, 0, 5, 400 + random(100, 600), true};
   
 
   for (int i = 0; i < 64; i++) {
      
-      hostages[i] = { (i < 16 ? HOSTAGE_LEAVING_DORM : HOSTAGE_IN_DORM), random(0, 10), dormitories[i / 16].xPos };
+      hostages[i] = { (i < 16 ? HOSTAGE_LEAVING_DORM : HOSTAGE_IN_DORM), ((i % 16) * 15) + 10, dormitories[i / 16].xPos };
+
+  }
+
+  for (int i = 0; i < NUMBER_OF_PLAYER_BULLETS; i++) {
+     
+      playerBullets[i] = { BULLET_INACTIVE_X_VALUE, 0, 0 };
 
   }
 
@@ -64,6 +68,8 @@ void setup() {
   arduboy.boot();
   arduboy.flashlight();
   arduboy.setFrameRate(25);
+  arduboy.initRandomSeed();
+
   resetGame();
   
 }
@@ -78,11 +84,33 @@ void loop() {
   arduboy.pollButtons();
   arduboy.clear();
 
-  if (playerStack.isEmpty()) {
 
-    playerMovements();
+  // Handle player actions ..
+
+  if (playerStack.isEmpty()) { playerMovements(); }
+
+  if (arduboy.justPressed(A_BUTTON) && (absT(image) <= 12 || absT(image) >=20)) {
+
+    for (int i = 0; i < NUMBER_OF_PLAYER_BULLETS; i++) {
+      
+      Bullet *bullet = &playerBullets[i];
+
+      if (bullet->xPos == BULLET_INACTIVE_X_VALUE) {
+
+        bullet->xPos = backgroundX;
+        bullet->yPos = y + 19;
+        bullet->yDelta = 1;
+        bullet->xDelta = deltaX * 2;
+        break;
+
+      }
+
+    }
 
   }
+
+
+  // Update the screen and object positions ..
 
   if (!playerStack.isEmpty()) {
 
@@ -108,172 +136,63 @@ void loop() {
   if (backgroundXOffset > 0) backgroundXOffset = backgroundXOffset - 64;
 
 
-  if (y < (HELICOPTER_MAXIMUM_HEIGHT + 4) && deltaY == -4)  { deltaY = -2; }
+  // Change the helicopters Y position ..
+
+  if (y < (HELICOPTER_MAXIMUM_HEIGHT + 4) && deltaY == -4) { deltaY = -2; }
   if (y < (HELICOPTER_MAXIMUM_HEIGHT + 2) && deltaY == -2) { deltaY = -1; }
   if (y < (HELICOPTER_MAXIMUM_HEIGHT + 1) && deltaY == -1) { deltaY = 0; }
 
   if (y > (HELICOPTER_MINIMUM_HEIGHT - 4) && deltaY == 4)  { deltaY = 2; }
-  if (y > (HELICOPTER_MINIMUM_HEIGHT - 2) && deltaY == 2) { deltaY = 1; }
-  if (y > (HELICOPTER_MINIMUM_HEIGHT - 1) && deltaY == 1) { deltaY = 0; }
-
+  if (y > (HELICOPTER_MINIMUM_HEIGHT - 2) && deltaY == 2)  { deltaY = 1; }
+  if (y > (HELICOPTER_MINIMUM_HEIGHT - 1) && deltaY == 1)  { deltaY = 0; }
 
 
   // Update hostages ..
 
-  uint8_t randomTopLimit = 0;
-
-  for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
-
-    Hostage *hostage = &hostages[i];
+  hostageMovements();
 
 
-    // Collect hostages ..
+  // Update bullets ..
 
-    if (hostage->stance != HOSTAGE_DEAD && hostage->stance <= HOSTAGE_LEAVING_DORM &&
-        backgroundX > 50 && y >= 40 && absT(hostage->xPos - backgroundX) < 5) {    
+  for (int i = 0; i < NUMBER_OF_PLAYER_BULLETS; i++) {
 
-      inHeli++;
-      hostage->stance = HOSTAGE_IN_HELICOPTER;
-      hostage->countDown = (14 * inHeli);
+    Bullet *bullet = &playerBullets[i];
 
-    }
+    if (bullet->xPos != BULLET_INACTIVE_X_VALUE) {
+      bullet->xPos = bullet->xPos - bullet->xDelta;
+      bullet->yPos = bullet->yPos + bullet->yDelta;
+      bullet->yDelta = calcSpeed(bullet->yDelta, true);
 
-    // Deposit hostages at base ..
+      switch (bullet->yPos) {
 
-    else if (hostage->stance == HOSTAGE_IN_HELICOPTER && 
-             y >= 40 &&                                                                                               
-             ((image == 1 && backgroundX < 24 && backgroundX > -4) || 
-              (image == -1 && backgroundX < 22 && backgroundX > 0) || 
-              (image == 10 && backgroundX < 22 && backgroundX > -12))) {                
+        case 46 ... 52:               // Hitting a hostage?
 
-      hostage->countDown--;
+          for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
+            
+            if (hostages[i].stance >= HOSTAGE_RUNNING_LEFT_1 && 
+                hostages[i].stance <= HOSTAGE_WAVING_22 && 
+                absT(hostages[i].xPos - bullet->xPos) < 3) {
 
-      if (hostage->countDown == 0) {
+              playerBulletExplosion.xPos = bullet->xPos;
+              playerBulletExplosion.yPos = 52;
+              playerBulletExplosion.explosionType = EXPLOSION_MED;
+              bullet->xPos = BULLET_INACTIVE_X_VALUE;
 
-        hostage->stance = HOSTAGE_RUNNING_RIGHT_1;
-        hostage->countDown = 255;
-        hostage->xPos = backgroundX;
-        inHeli--;
+              hostages[i].stance = HOSTAGE_DYING_2;
+              dead++;
 
-      }
-
-    }
-
-    // Hostages are safe ..
-    
-    else if (hostage->stance != HOSTAGE_SAFE && hostage->xPos < -40) {                                                                                   
-
-        hostage->stance = HOSTAGE_SAFE;
-        safe++;
-
-    }
-
-    // Hostages run wild!
-
-    else {                                                                                                            
-
-      switch (hostage->stance) {
-
-        case HOSTAGE_RUNNING_LEFT_1:
-        case HOSTAGE_RUNNING_LEFT_2:
-        case HOSTAGE_RUNNING_LEFT_3:
-
-          hostage->stance++;
-          hostage->countDown--;
-          hostage->xPos++;
-          randomTopLimit = HOSTAGE_WAVING_22;
-          break;
-
-        case HOSTAGE_RUNNING_LEFT_4:
-
-          hostage->stance = HOSTAGE_RUNNING_LEFT_1;
-          hostage->countDown--;
-          hostage->xPos++;
-          randomTopLimit = HOSTAGE_WAVING_22;
-          break;
-
-        case HOSTAGE_RUNNING_RIGHT_1:
-        case HOSTAGE_RUNNING_RIGHT_2:
-        case HOSTAGE_RUNNING_RIGHT_3:
-
-          hostage->stance++;
-          hostage->countDown--;
-          hostage->xPos--;
-          randomTopLimit = HOSTAGE_WAVING_22;
-          break;
-
-        case HOSTAGE_RUNNING_RIGHT_4:
-
-          hostage->stance = HOSTAGE_RUNNING_RIGHT_1;
-          hostage->countDown--;
-          hostage->xPos--;
-          randomTopLimit = HOSTAGE_WAVING_22;
-          break;
-
-        case HOSTAGE_WAVING_11:
-        case HOSTAGE_WAVING_12:
-
-          hostage->stance++;
-          hostage->countDown--;
-          randomTopLimit = HOSTAGE_RUNNING_RIGHT_4;
-          break;
-
-        case HOSTAGE_WAVING_21:
-        case HOSTAGE_WAVING_22:
-
-          hostage->stance++;  
-          if (hostage->stance > HOSTAGE_WAVING_22) hostage->stance = HOSTAGE_WAVING_11;
-          hostage->countDown--;
-          randomTopLimit = HOSTAGE_RUNNING_RIGHT_4;
-          break;
-
-        case HOSTAGE_LEAVING_DORM:
-
-          hostage->countDown--;
-          if (hostage->countDown == 0) {
-            randomTopLimit = HOSTAGE_RUNNING_RIGHT_4;
-          }
-          break;
-
-      }
-
-
-      if (hostage->countDown == 0) {
-
-        if (absT(hostage->xPos - backgroundX) < 200) {
-
-          if (random(0, 11) < 9) {
-
-            hostage->stance = (hostage->xPos > backgroundX ? HOSTAGE_RUNNING_RIGHT_1 : HOSTAGE_RUNNING_LEFT_1);
-            hostage->countDown = random(5, 10);
-
-          }
-          else {
-
-            hostage->stance = HOSTAGE_WAVING_11;
-            hostage->countDown = random(2, 5);
+            }
 
           }
 
-        }
-        else {
+          break;
 
-          hostage->stance = random(HOSTAGE_RUNNING_LEFT_1, randomTopLimit + 1);
-
-          switch (hostage->stance) {
-
-            case HOSTAGE_RUNNING_LEFT_1 ... HOSTAGE_RUNNING_RIGHT_4:
-              hostage->countDown = random(1, 21);
-              break;
-
-            case HOSTAGE_WAVING_22 ... HOSTAGE_WAVING_22:
-              hostage->countDown = random(1, 7);
-              break;
-
-
-          }
-
-        }
+        case 61 ... 74:               //  Hitting the ground ..
+          playerBulletExplosion.xPos = bullet->xPos;
+          playerBulletExplosion.yPos = 60;
+          playerBulletExplosion.explosionType = EXPLOSION_SML;
+          bullet->xPos = BULLET_INACTIVE_X_VALUE;
+          break;
 
       }
 
@@ -282,7 +201,78 @@ void loop() {
   }
 
 
+  // Update tank ..
 
+  int16_t tankDif = tank.xPos - backgroundX;
+
+  if (tank.state != TANK_STATE_DEAD) {
+
+    switch (tank.state) {
+
+      case TANK_STATE_MOVE_LEFT:
+        tank.xPos+=2;
+        break;
+
+      case TANK_STATE_MOVE_RIGHT:
+        tank.xPos-=2;
+        break;
+
+    }
+
+
+    // Move turrent ..
+
+    switch (tankDif) {
+
+      case -999 ... -40:
+        tank.turrentDirection = TANK_TURRENT_DIR_LEFT_LOW;
+        break;
+
+      case -39 ... -10:
+        tank.turrentDirection = TANK_TURRENT_DIR_LEFT_MID;
+        break;
+
+      case -9 ... 9:
+        tank.turrentDirection = TANK_TURRENT_DIR_UPRIGHT;
+        break;
+
+      case 10 ... 39:
+        tank.turrentDirection = TANK_TURRENT_DIR_RIGHT_MID;
+        break;
+
+      case 40 ... 999:
+        tank.turrentDirection = TANK_TURRENT_DIR_RIGHT_LOW;
+        break;
+
+    }
+
+
+    tank.countDown--;
+
+    if (tank.countDown == 0) {
+
+      if (tankDif < -20) {
+
+        tank.state = TANK_STATE_MOVE_LEFT;
+        tank.countDown = random(6, 16);
+
+      }
+      else if (tankDif > 20) {
+
+        tank.state = TANK_STATE_MOVE_RIGHT;
+        tank.countDown = random(6, 16);
+        
+      }
+      else {
+
+        tank.state = TANK_STATE_STATIONARY;
+        tank.countDown = random(6, 16);
+
+      }
+
+    }
+
+  }
 
 
   // Render background ..
@@ -352,6 +342,12 @@ void loop() {
           arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 48, hostage_06, WHITE, false);
           break;
 
+        case HOSTAGE_DYING_1:
+        case HOSTAGE_DYING_2:
+          arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 48, hostage_07, WHITE, false);
+          hostages[i].stance--;
+          break;
+
       }
 
     }
@@ -359,21 +355,127 @@ void loop() {
   }
 
 
+  // Draw helicopter ..
+
   drawHelicopter(45, y, image);
 
-  // Draw tanks ..
 
-  for (uint8_t i = 0; i < NUMBER_OF_TANKS; i++) {
+  // Draw tank ..
 
-    if (tanks[i].state != TANK_STATE_DEAD && (tanks[i].xPos > backgroundX - 144) && (tanks[i].xPos < backgroundX + 144)) {
+  if (tank.state != TANK_STATE_DEAD && (tank.xPos > backgroundX - 144) && (tank.xPos < backgroundX + 144)) {
 
-      arduboy.drawCompressedMirror(backgroundX - tanks[i].xPos + 64 - 15, 47, tank_00_mask, BLACK, false);
-      arduboy.drawCompressedMirror(backgroundX - tanks[i].xPos + 64 - 15, 47, tank_00, WHITE, false);
+    arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, tank_00_mask, BLACK, false);
+    arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, (tank.track ? tank_00 : tank_01), WHITE, false);
 
+    switch (tank.turrentDirection) {
+
+      case TANK_TURRENT_DIR_LEFT_LOW:
+        arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, tank_turrent_00, WHITE, true);
+        break;
+
+      case TANK_TURRENT_DIR_LEFT_MID:
+        arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, tank_turrent_01, WHITE, true);
+        break;
+
+      case TANK_TURRENT_DIR_UPRIGHT:
+        arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, tank_turrent_02, WHITE, false);
+        break;
+
+      case TANK_TURRENT_DIR_RIGHT_MID:
+        arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, tank_turrent_01, WHITE, false);
+        break;
+
+      case TANK_TURRENT_DIR_RIGHT_LOW:
+        arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, tank_turrent_00, WHITE, false);
+        break;
+      
+
+    }
+
+
+
+    if (tank.state == TANK_STATE_MOVE_LEFT || tank.state == TANK_STATE_MOVE_RIGHT) tank.track = !tank.track;
+
+  }
+
+
+
+  // Draw player bullets ..
+
+  for (int i = 0; i < NUMBER_OF_PLAYER_BULLETS; i++) {
+
+    Bullet *bullet = &playerBullets[i];
+
+    if (bullet->xPos != BULLET_INACTIVE_X_VALUE) {
+  arduboy.setCursor(91, 10);
+  arduboy.print(i);
+      if ((bullet->xPos > backgroundX - 144) && (bullet->xPos < backgroundX + 144)) {
+
+        arduboy.fillRect(backgroundX - bullet->xPos + 64 - 1, bullet->yPos, 2, 2, WHITE);
+
+      }
+   
     }
 
   }
 
+
+  // Draw explosion ..
+
+  if (playerBulletExplosion.xPos != BULLET_INACTIVE_X_VALUE) {
+
+      if ((playerBulletExplosion.xPos > backgroundX - 144) && (playerBulletExplosion.xPos < backgroundX + 144)) {
+
+        arduboy.drawCompressedMirror(backgroundX - playerBulletExplosion.xPos + 64 - 4, playerBulletExplosion.yPos, explosions[playerBulletExplosion.explosionType - 1], WHITE, false);
+        playerBulletExplosion.explosionType--;
+        if (playerBulletExplosion.explosionType == 0) playerBulletExplosion.xPos = BULLET_INACTIVE_X_VALUE;
+
+      }
+
+  }
+
+
+
+  // Draw fences ..
+
+  switch (backgroundX) {
+
+    case 120 ... 159:
+      arduboy.drawCompressedMirror(-24 + (backgroundX - 150), 1, fence_00_mask, BLACK, true);
+      arduboy.drawCompressedMirror(-24 + (backgroundX - 150), 1, fence_00, WHITE, true);
+      break;
+
+    case 160 ... 169:
+      arduboy.drawCompressedMirror(-16 + (backgroundX - 160), 1, fence_01_mask, BLACK, true);
+      arduboy.drawCompressedMirror(-16 + (backgroundX - 160), 1, fence_01, WHITE, true);
+      break;
+
+    case 170 ... 179:
+      arduboy.drawCompressedMirror(-8 + (backgroundX - 170), 1, fence_02_mask, BLACK, true);
+      arduboy.drawCompressedMirror(-8 + (backgroundX - 170), 1, fence_02, WHITE, true);
+      break;
+
+    case 180 ... 189:
+      arduboy.drawCompressedMirror(60 + (backgroundX - 180), 1, fence_03_mask, BLACK, false);
+      arduboy.drawCompressedMirror(60 + (backgroundX - 180), 1, fence_03, WHITE, false);
+      break;
+
+    case 190 ... 199:
+      arduboy.drawCompressedMirror(68 + (backgroundX - 190), 1, fence_02_mask, BLACK, false);
+      arduboy.drawCompressedMirror(68 + (backgroundX - 190), 1, fence_02, WHITE, false);
+      break;
+
+    case 200 ... 209:
+      arduboy.drawCompressedMirror(76 + (backgroundX - 200), 1, fence_01_mask, BLACK, false);
+      arduboy.drawCompressedMirror(76 + (backgroundX - 200), 1, fence_01, WHITE, false);
+      break;
+
+    case 210 ... 249:
+      arduboy.drawCompressedMirror(84 + (backgroundX - 210), 1, fence_00_mask, BLACK, false);
+      arduboy.drawCompressedMirror(84 + (backgroundX - 210), 1, fence_00, WHITE, false);
+      break;
+    
+  }
 
   // Draw scoreboard ..
 
@@ -383,6 +485,14 @@ void loop() {
   arduboy.print(inHeli);
   arduboy.setCursor(31, 0);
   arduboy.print(safe);
+
+
+  // arduboy.setCursor(1, 10);
+  // arduboy.print(tankDif);
+  // arduboy.setCursor(31, 10);
+  // arduboy.print(tank.turrentDirection);
+  // arduboy.setCursor(61, 10);
+  // arduboy.print(tank.state);
 
 //  arduboy.drawCompressedMirror(0, 0, score_left_mask, BLACK, false);
 //  arduboy.drawCompressedMirror(0, 0, score_left, WHITE, false);
