@@ -407,8 +407,7 @@ void loop() {
     Bullet *bullet = &playerBullets[i];
 
     if (bullet->xPos != BULLET_INACTIVE_X_VALUE) {
-  arduboy.setCursor(91, 10);
-  arduboy.print(i);
+ 
       if ((bullet->xPos > backgroundX - 144) && (bullet->xPos < backgroundX + 144)) {
 
         arduboy.fillRect(backgroundX - bullet->xPos + 64 - 1, bullet->yPos, 2, 2, WHITE);
@@ -487,13 +486,6 @@ void loop() {
   arduboy.print(safe);
 
 
-  // arduboy.setCursor(1, 10);
-  // arduboy.print(tankDif);
-  // arduboy.setCursor(31, 10);
-  // arduboy.print(tank.turrentDirection);
-  // arduboy.setCursor(61, 10);
-  // arduboy.print(tank.state);
-
 //  arduboy.drawCompressedMirror(0, 0, score_left_mask, BLACK, false);
 //  arduboy.drawCompressedMirror(0, 0, score_left, WHITE, false);
 
@@ -514,15 +506,6 @@ void loop() {
     arduboy.print(backgroundXOffset);
     arduboy.setCursor(70, 0);
     arduboy.print(incX);
-
-    // arduboy.setCursor(1, 0);
-    // arduboy.print(hostages[0].xPos);
-
-    // arduboy.setCursor(25, 0);
-    // arduboy.print(hostages[0].countDown);
-
-    // arduboy.setCursor(50, 0);
-    // arduboy.print(hostages[0].stance);
 
   #endif
 
