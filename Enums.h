@@ -4,6 +4,14 @@
 
 #define _DEBUG
 
+enum class GameState : uint8_t {
+  Initialise,
+  Introduction,
+  Sortie,
+  PlayGame,
+  GameOver
+};
+
 struct Bullet {
   int16_t xPos;
   uint16_t yPos;
@@ -26,6 +34,7 @@ struct Hostage {
 struct Dormitory {
   uint8_t state;    // 0 .. intact.  1 shot open.
   int16_t xPos;
+  uint8_t numberOfHits;
 };
 
 struct Tank {
@@ -38,11 +47,11 @@ struct Tank {
 
 
 #define NUMBER_OF_PLAYER_BULLETS            8
-#define BULLET_INACTIVE_X_VALUE             5000
-
 #define NUMBER_OF_HOSTAGES                  64
 #define NUMBER_OF_DORMITORIES               4
 #define NUMBER_OF_TANKS                     6
+
+#define BULLET_INACTIVE_X_VALUE             5000
 
 #define TANK_STATE_DEAD                     0
 #define TANK_STATE_MOVE_LEFT                1
@@ -54,9 +63,11 @@ struct Tank {
 #define TANK_TURRENT_DIR_UPRIGHT            2
 #define TANK_TURRENT_DIR_RIGHT_MID          3
 #define TANK_TURRENT_DIR_RIGHT_LOW          4
+#define TANK_FAR_RIGHT_POS                  225
 
 #define HELICOPTER_MAXIMUM_HEIGHT           (int8_t)-3
 #define HELICOPTER_MINIMUM_HEIGHT           (int8_t)40
+#define HELICOPTER_HOSTAGE_CAPACITY         16
 
 #define PREV_TURN_FROM_LEFT                 0
 #define PREV_TURN_FROM_RIGHT                1
@@ -67,6 +78,10 @@ struct Tank {
 
 #define DORMITORY_STATE_INTACT              0
 #define DORMITORY_STATE_OPEN                1
+#define DORMITORY_HITS_REQUIRED             5
+#define DORMITORY_SPACING                   400
+#define DORMITORY_SPACING_FUDGE             DORMITORY_SPACING / 4
+#define DORMITORY_HOSTAGE_CAPACITY          16
 
 #define HOSTAGE_IN_DORM                     0
 #define HOSTAGE_RUNNING_LEFT_1              1
@@ -91,3 +106,7 @@ struct Tank {
 
 #define EXPLOSION_SML                       1
 #define EXPLOSION_MED                       2
+#define EXPLOSION_LRG_1                     3
+#define EXPLOSION_LRG_2                     4
+#define EXPLOSION_LRG_3                     5
+#define EXPLOSION_LRG_4                     6

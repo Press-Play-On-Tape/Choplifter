@@ -17,8 +17,10 @@ void hostageMovements() {
 
     // Collect hostages ..
 
-    if (hostage->stance != HOSTAGE_DEAD && hostage->stance <= HOSTAGE_LEAVING_DORM &&
-        backgroundX > 50 && y >= 40 && absT(hostage->xPos - backgroundX) < 5) {    
+    if (inHeli < HELICOPTER_HOSTAGE_CAPACITY &&
+        hostage->stance != HOSTAGE_DEAD && hostage->stance <= HOSTAGE_LEAVING_DORM &&
+        backgroundX > 50 && y >= 40 && absT(hostage->xPos - backgroundX) < 5
+        ) {    
 
       inHeli++;
       hostage->stance = HOSTAGE_IN_HELICOPTER;
@@ -146,17 +148,18 @@ void hostageMovements() {
         }
         else {
 
-          if (hostage->xPos > HOSTAGE_FAR_RIGHT_POS) { randomTopLimit = HOSTAGE_RUNNING_LEFT_4; }  // Prevent hostage from crossing fence ..          
+          if (hostage->xPos > HOSTAGE_FAR_RIGHT_POS) { randomTopLimit = HOSTAGE_RUNNING_LEFT_4; }  // Prevent hostage from crossing fence ..      
+
           hostage->stance = random(HOSTAGE_RUNNING_LEFT_1, randomTopLimit + 1);
 
           switch (hostage->stance) {
 
             case HOSTAGE_RUNNING_LEFT_1 ... HOSTAGE_RUNNING_RIGHT_4:
-              hostage->countDown = random(1, 21);
+              hostage->countDown = random(5, 15);
               break;
 
             case HOSTAGE_WAVING_11 ... HOSTAGE_WAVING_22:
-              hostage->countDown = random(1, 7);
+              hostage->countDown = random(2, 5);
               break;
 
 
