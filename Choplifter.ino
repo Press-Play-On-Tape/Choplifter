@@ -133,6 +133,7 @@ void gameOver() {
 
 }
 
+
 // -- Play Choplifter ! -------------------------------------------------------------------
 
 void play() {
@@ -144,19 +145,48 @@ void play() {
 
   if (arduboy.justPressed(A_BUTTON) && (absT(image) <= 12 || absT(image) >=20)) {
 
-    for (int i = 0; i < NUMBER_OF_PLAYER_BULLETS; i++) {
-      
-      Bullet *bullet = &playerBullets[i];
+    switch (absT(image)) {
 
-      if (bullet->xPos == BULLET_INACTIVE_X_VALUE) {
+      case 1 ... 3:
+      case 13 ... 17:
 
-        bullet->xPos = backgroundX;
-        bullet->yPos = y + 19;
-        bullet->yDelta = 1;
-        bullet->xDelta = deltaX * 2;
+        for (int i = 0; i < NUMBER_OF_PLAYER_BULLETS; i++) {
+          
+          Bullet *bullet = &playerBullets[i];
+
+          if (bullet->xPos == BULLET_INACTIVE_X_VALUE) {
+
+            bullet->xPos = backgroundX + (image < 0 ? -13 : 13);
+            bullet->yPos = y + 15;
+            bullet->yDelta = BULLET_SHOOT_HORIZONTAL;
+            bullet->xDelta = (image < 0 ? 4 : -4);
+            break;
+
+          }
+
+        }
+
         break;
 
-      }
+      default:
+
+        for (int i = 0; i < NUMBER_OF_PLAYER_BULLETS; i++) {
+          
+          Bullet *bullet = &playerBullets[i];
+
+          if (bullet->xPos == BULLET_INACTIVE_X_VALUE) {
+
+            bullet->xPos = backgroundX;
+            bullet->yPos = y + 19;
+            bullet->yDelta = 1;
+            bullet->xDelta = deltaX * 2;
+            break;
+
+          }
+
+        }
+
+        break;
 
     }
 
@@ -249,9 +279,14 @@ void play() {
     Bullet *bullet = &playerBullets[i];
 
     if (bullet->xPos != BULLET_INACTIVE_X_VALUE) {
+
       bullet->xPos = bullet->xPos - bullet->xDelta;
-      bullet->yPos = bullet->yPos + bullet->yDelta;
-      bullet->yDelta = calcSpeed(bullet->yDelta, true);
+      if (absT(bullet->xPos - backgroundX) > 70) { bullet->xPos = BULLET_INACTIVE_X_VALUE; }
+
+      if (bullet->yDelta != BULLET_SHOOT_HORIZONTAL) {
+        bullet->yPos = bullet->yPos + bullet->yDelta;
+        bullet->yDelta = calcSpeed(bullet->yDelta, true);
+      }
 
       switch (bullet->yPos) {
 

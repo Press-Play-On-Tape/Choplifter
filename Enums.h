@@ -52,6 +52,7 @@ struct Tank {
 #define NUMBER_OF_TANKS                     6
 
 #define BULLET_INACTIVE_X_VALUE             5000
+#define BULLET_SHOOT_HORIZONTAL             255
 
 #define TANK_STATE_DEAD                     0
 #define TANK_STATE_MOVE_LEFT                1
