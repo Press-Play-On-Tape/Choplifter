@@ -30,18 +30,20 @@ void render(uint8_t sortieNumber) {
 
     for (uint8_t i = 0; i < NUMBER_OF_DORMITORIES; i++) {
 
-      if ((dormitories[i].xPos > backgroundX - 144) && (dormitories[i].xPos < backgroundX + 144)) {
+      Dormitory *dormitory = &dormitories[i];
 
-        if (dormitories[i].state == DORMITORY_STATE_INTACT) {
+      if ((dormitory->xPos > backgroundX - 144) && (dormitory->xPos < backgroundX + 144)) {
 
-          arduboy.drawCompressedMirror(backgroundX - dormitories[i].xPos + 64 - 15, 40, dormitory_01_mask, BLACK, false);
-          arduboy.drawCompressedMirror(backgroundX - dormitories[i].xPos + 64 - 15, 40, dormitory_01, WHITE, false);
+        if (dormitory->state == DORMITORY_STATE_INTACT) {
+
+          arduboy.drawCompressedMirror(backgroundX - dormitory->xPos + 64 - 15, 40, dormitory_01_mask, BLACK, false);
+          arduboy.drawCompressedMirror(backgroundX - dormitory->xPos + 64 - 15, 40, dormitory_01, WHITE, false);
 
         }
         else {
 
-          arduboy.drawCompressedMirror(backgroundX - dormitories[i].xPos + 64 - 15, 40, dormitory_02_mask, BLACK, false);
-          arduboy.drawCompressedMirror(backgroundX - dormitories[i].xPos + 64 - 15, 40, dormitory_02, WHITE, false);
+          arduboy.drawCompressedMirror(backgroundX - dormitory->xPos + 64 - 15, 40, dormitory_02_mask, BLACK, false);
+          arduboy.drawCompressedMirror(backgroundX - dormitory->xPos + 64 - 15, 40, dormitory_02, WHITE, false);
           
         }
 
@@ -54,30 +56,32 @@ void render(uint8_t sortieNumber) {
 
     for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
       
-      if ((hostages[i].xPos > backgroundX - 133) && (hostages[i].xPos < backgroundX + 133)) {
+      Hostage *hostage = &hostages[i];
 
-        switch (hostages[i].stance) {
+      if ((hostage->xPos > backgroundX - 133) && (hostage->xPos < backgroundX + 133)) {
+
+        switch (hostage->stance) {
 
           case HOSTAGE_RUNNING_LEFT_1 ... HOSTAGE_RUNNING_LEFT_4:
-            arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 48, hostage_images[hostages[i].stance - 1], WHITE, false);
+            arduboy.drawCompressedMirror(backgroundX - hostage->xPos + 64 - 3, 48, hostage_images[hostage->stance - 1], WHITE, false);
             break;
 
           case HOSTAGE_RUNNING_RIGHT_1 ... HOSTAGE_RUNNING_RIGHT_4:
-            arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 48, hostage_images[hostages[i].stance - 5], WHITE, true);
+            arduboy.drawCompressedMirror(backgroundX - hostage->xPos + 64 - 3, 48, hostage_images[hostage->stance - 5], WHITE, true);
             break;
 
           case HOSTAGE_WAVING_11 ... HOSTAGE_WAVING_12:
-            arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 48, hostage_05, WHITE, false);
+            arduboy.drawCompressedMirror(backgroundX - hostage->xPos + 64 - 3, 48, hostage_05, WHITE, false);
             break;
 
           case HOSTAGE_WAVING_21 ... HOSTAGE_WAVING_22:
-            arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 48, hostage_06, WHITE, false);
+            arduboy.drawCompressedMirror(backgroundX - hostage->xPos + 64 - 3, 48, hostage_06, WHITE, false);
             break;
 
           case HOSTAGE_DYING_1:
           case HOSTAGE_DYING_2:
-            arduboy.drawCompressedMirror(backgroundX - hostages[i].xPos + 64 - 3, 48, hostage_07, WHITE, false);
-            hostages[i].stance--;
+            arduboy.drawCompressedMirror(backgroundX - hostage->xPos + 64 - 3, 48, hostage_07, WHITE, false);
+            hostage->stance--;
             break;
 
         }
@@ -94,39 +98,45 @@ void render(uint8_t sortieNumber) {
 
     // Draw tank ..
 
-    if (tank.state != TANK_STATE_DEAD && (tank.xPos > backgroundX - 144) && (tank.xPos < backgroundX + 144)) {
+    for (int i = 0; i < NUMBER_OF_TANKS; i++) {
 
-      arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, tank_00_mask, BLACK, false);
-      arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, (tank.track ? tank_00 : tank_01), WHITE, false);
+      Tank *tank = &tanks[i];
 
-      switch (tank.turrentDirection) {
+      if (tank->state > TANK_STATE_DEAD_1 && (tank->xPos > backgroundX - 144) && (tank->xPos < backgroundX + 144)) {
 
-        case TANK_TURRENT_DIR_LEFT_LOW:
-          arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, tank_turrent_00, WHITE, true);
-          break;
+        arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, tank_00_mask, BLACK, false);
+        arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, (tank->track ? tank_00 : tank_01), WHITE, false);
 
-        case TANK_TURRENT_DIR_LEFT_MID:
-          arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, tank_turrent_01, WHITE, true);
-          break;
+        switch (tank->turrentDirection) {
 
-        case TANK_TURRENT_DIR_UPRIGHT:
-          arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, tank_turrent_02, WHITE, false);
-          break;
+          case TANK_TURRENT_DIR_LEFT_LOW:
+            arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, tank_turrent_00, WHITE, true);
+            break;
 
-        case TANK_TURRENT_DIR_RIGHT_MID:
-          arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, tank_turrent_01, WHITE, false);
-          break;
+          case TANK_TURRENT_DIR_LEFT_MID:
+            arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, tank_turrent_01, WHITE, true);
+            break;
 
-        case TANK_TURRENT_DIR_RIGHT_LOW:
-          arduboy.drawCompressedMirror(backgroundX - tank.xPos + 64 - 15, 47, tank_turrent_00, WHITE, false);
-          break;
-        
+          case TANK_TURRENT_DIR_UPRIGHT:
+            arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, tank_turrent_02, WHITE, false);
+            break;
+
+          case TANK_TURRENT_DIR_RIGHT_MID:
+            arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, tank_turrent_01, WHITE, false);
+            break;
+
+          case TANK_TURRENT_DIR_RIGHT_LOW:
+            arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, tank_turrent_00, WHITE, false);
+            break;
+          
+
+        }
+
+        if (tank->state == TANK_STATE_MOVE_LEFT || tank->state == TANK_STATE_MOVE_RIGHT) tank->track = !tank->track;
+
+        if (tank->state <= TANK_STATE_DEAD_3) {tank->state--; }
 
       }
-
-
-
-      if (tank.state == TANK_STATE_MOVE_LEFT || tank.state == TANK_STATE_MOVE_RIGHT) tank.track = !tank.track;
 
     }
 

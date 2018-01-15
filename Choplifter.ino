@@ -4,6 +4,7 @@
 #include "src/utils/Stack.h"
 
 Arduboy2Ext arduboy;
+
 uint8_t frame = 0;
 int8_t image = 1;
 
@@ -20,7 +21,7 @@ Stack <uint8_t, 20> playerStack;
 
 Hostage hostages[NUMBER_OF_HOSTAGES];
 Dormitory dormitories[NUMBER_OF_DORMITORIES];
-Tank tank;
+Tank tanks[NUMBER_OF_TANKS];
 Bullet playerBullets[NUMBER_OF_PLAYER_BULLETS];
 BulletExplosion playerBulletExplosion;
 
@@ -46,7 +47,12 @@ void resetGame() {
   dormitories[2] = { DORMITORY_STATE_INTACT,  (DORMITORY_SPACING * 3) };
   dormitories[3] = { DORMITORY_STATE_INTACT,  (DORMITORY_SPACING * 4) };
 
-  tank = {1, 0, 5, 400 + random(100, 600), true};
+  tanks[0] = {TANK_STATE_STATIONARY, 0, 5, (1 * TANK_SPACING) + random(100, 600), true};
+  tanks[1] = {TANK_STATE_STATIONARY, 0, 5, (2 * TANK_SPACING) + random(100, 600), true};
+  tanks[2] = {TANK_STATE_STATIONARY, 0, 5, (3 * TANK_SPACING) + random(100, 600), true};
+  tanks[3] = {TANK_STATE_STATIONARY, 0, 5, (4 * TANK_SPACING) + random(100, 600), true};
+  tanks[4] = {TANK_STATE_STATIONARY, 0, 5, (5 * TANK_SPACING) + random(100, 600), true};
+  tanks[5] = {TANK_STATE_STATIONARY, 0, 5, (6 * TANK_SPACING) + random(100, 600), true};
   
 
   for (int i = 0; i < 64; i++) {
@@ -160,6 +166,7 @@ void play() {
             bullet->yPos = y + 15;
             bullet->yDelta = BULLET_SHOOT_HORIZONTAL;
             bullet->xDelta = (image < 0 ? 4 : -4);
+            bullet->startYPos = bullet->yPos;
             break;
 
           }
@@ -180,6 +187,7 @@ void play() {
             bullet->yPos = y + 19;
             bullet->yDelta = 1;
             bullet->xDelta = deltaX * 2;
+            bullet->startYPos = bullet->yPos;
             break;
 
           }
@@ -280,6 +288,9 @@ void play() {
 
     if (bullet->xPos != BULLET_INACTIVE_X_VALUE) {
 
+
+      // Update bullet position ..
+
       bullet->xPos = bullet->xPos - bullet->xDelta;
       if (absT(bullet->xPos - backgroundX) > 70) { bullet->xPos = BULLET_INACTIVE_X_VALUE; }
 
@@ -287,6 +298,10 @@ void play() {
         bullet->yPos = bullet->yPos + bullet->yDelta;
         bullet->yDelta = calcSpeed(bullet->yDelta, true);
       }
+
+
+
+      // Check to see if we hit anything ..
 
       switch (bullet->yPos) {
 
@@ -317,8 +332,10 @@ void play() {
                 uint8_t count = 0;
 
                 for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
-  
-                  if (hostages[i].stance == HOSTAGE_IN_DORM) {
+
+                  Hostage *hostage = &hostages[i];
+
+                  if (hostage->stance == HOSTAGE_IN_DORM) {
                    
                     hostages[i] = { HOSTAGE_LEAVING_DORM, (count * 15) + 10, dormitories[ ((backgroundX + DORMITORY_SPACING_FUDGE) / DORMITORY_SPACING) - 1].xPos };
                     count++;
@@ -338,26 +355,62 @@ void play() {
 
           break;
 
-        case 47 ... 52:               // Hitting a hostage?
+        case 47 ... 52:               // Hitting a hostage or the tank?
+          {
+            bool hit = false;
 
-          for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
-            
-            if (hostages[i].stance >= HOSTAGE_RUNNING_LEFT_1 && 
-                hostages[i].stance <= HOSTAGE_WAVING_22 && 
-                absT(hostages[i].xPos - bullet->xPos) < 3) {
+            for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
+  
+              Hostage *hostage = &hostages[i];
 
-              playerBulletExplosion.xPos = bullet->xPos;
-              playerBulletExplosion.yPos = 52;
-              playerBulletExplosion.explosionType = EXPLOSION_MED;
-              bullet->xPos = BULLET_INACTIVE_X_VALUE;
+              if (hostage->stance >= HOSTAGE_RUNNING_LEFT_1 && 
+                  hostage->stance <= HOSTAGE_WAVING_22 && 
+                  absT(hostage->xPos - bullet->xPos) < 3) {
 
-              hostages[i].stance = HOSTAGE_DYING_2;
-              dead++;
+                playerBulletExplosion.xPos = bullet->xPos;
+                playerBulletExplosion.yPos = 52;
+                playerBulletExplosion.explosionType = EXPLOSION_MED;
+                bullet->xPos = BULLET_INACTIVE_X_VALUE;
+
+                hostage->stance = HOSTAGE_DYING_2;
+                dead++;
+                hit = true;
+                break;
+
+              }
+
+            }
+
+            if (!hit) {
+
+              for (uint8_t i = 0; i < NUMBER_OF_TANKS; i++) {
+
+                Tank *tank = &tanks[i];
+
+                if (bullet->startYPos > TANK_BULLET_MIN_Y_VALUE && absT(tank->xPos - bullet->xPos) < 16) {  // Bullets that hit tank must be fired from down low ..
+
+                  playerBulletExplosion.xPos = bullet->xPos;
+                  playerBulletExplosion.yPos = (absT(tank->xPos - bullet->xPos) < 8 ? 46 : 51);
+                  playerBulletExplosion.explosionType = EXPLOSION_MED;
+                  bullet->xPos = BULLET_INACTIVE_X_VALUE;
+
+                  tank->numberOfHits++;
+
+                  if (tank->numberOfHits == TANK_BULLET_NUMBER_OF_HITS) {
+
+                    playerBulletExplosion.yPos = 50;
+                    playerBulletExplosion.explosionType = EXPLOSION_LRG_1;
+                    tank->state = TANK_STATE_DEAD_3;
+
+                  }
+
+                }
+
+              }
 
             }
 
           }
-
           break;
 
         case 61 ... 74:               //  Hitting the ground ..
@@ -376,85 +429,91 @@ void play() {
 
   // Update tank ..
 
-  int16_t tankDif = tank.xPos - backgroundX;
+  for (int i=0; i < NUMBER_OF_TANKS; i++) {
 
-  if (tank.state != TANK_STATE_DEAD) {
+    Tank *tank = &tanks[i];
 
-    switch (tank.state) {
+    int16_t tankDif = tank->xPos - backgroundX;
 
-      case TANK_STATE_MOVE_LEFT:
-        tank.xPos+=2;
-        break;
+    if (tank->state > TANK_STATE_DEAD_3) {
 
-      case TANK_STATE_MOVE_RIGHT:
+      switch (tank->state) {
 
-        if (tank.xPos > TANK_FAR_RIGHT_POS) {
-          tank.xPos-=2;
-        }
-        else {
-          tank.state = TANK_STATE_STATIONARY;
-        }
-        break;
+        case TANK_STATE_MOVE_LEFT:
+          tank->xPos+=2;
+          break;
 
-    }
+        case TANK_STATE_MOVE_RIGHT:
 
-
-    // Move turrent ..
-
-    switch (tankDif) {
-
-      case -999 ... -40:
-        tank.turrentDirection = TANK_TURRENT_DIR_LEFT_LOW;
-        break;
-
-      case -39 ... -10:
-        tank.turrentDirection = TANK_TURRENT_DIR_LEFT_MID;
-        break;
-
-      case -9 ... 9:
-        tank.turrentDirection = TANK_TURRENT_DIR_UPRIGHT;
-        break;
-
-      case 10 ... 39:
-        tank.turrentDirection = TANK_TURRENT_DIR_RIGHT_MID;
-        break;
-
-      case 40 ... 999:
-        tank.turrentDirection = TANK_TURRENT_DIR_RIGHT_LOW;
-        break;
-
-    }
-
-
-    tank.countDown--;
-
-    if (tank.countDown == 0) {
-
-      switch (random(0, 3)) {
-
-        case 0 ... 1:
-
-          if (tankDif < -20) {
-
-            tank.state = TANK_STATE_MOVE_LEFT;
-            tank.countDown = random(6, 16);
-
+          if (tank->xPos > TANK_FAR_RIGHT_POS) {
+            tank->xPos-=2;
           }
-          else if (tankDif > 20) {
+          else {
+            tank->state = TANK_STATE_STATIONARY;
+          }
+          break;
 
-            tank.state = TANK_STATE_MOVE_RIGHT;
-            tank.countDown = random(6, 16);
+      }
+
+
+      // Move turrent ..
+
+      switch (tankDif) {
+
+        case -999 ... -40:
+          tank->turrentDirection = TANK_TURRENT_DIR_LEFT_LOW;
+          break;
+
+        case -39 ... -10:
+          tank->turrentDirection = TANK_TURRENT_DIR_LEFT_MID;
+          break;
+
+        case -9 ... 9:
+          tank->turrentDirection = TANK_TURRENT_DIR_UPRIGHT;
+          break;
+
+        case 10 ... 39:
+          tank->turrentDirection = TANK_TURRENT_DIR_RIGHT_MID;
+          break;
+
+        case 40 ... 999:
+          tank->turrentDirection = TANK_TURRENT_DIR_RIGHT_LOW;
+          break;
+
+      }
+
+
+      tank->countDown--;
+
+      if (tank->countDown == 0) {
+
+        switch (random(0, 3)) {
+
+          case 0 ... 1:
+
+            if (tankDif < -20) {
+
+              tank->state = TANK_STATE_MOVE_LEFT;
+              tank->countDown = random(6, 16);
+
+            }
+            else if (tankDif > 20) {
+
+              tank->state = TANK_STATE_MOVE_RIGHT;
+              tank->countDown = random(6, 16);
+              
+            }
+
+            break;
+
+          case 2:
+
+            tank->state = TANK_STATE_STATIONARY;
+            tank->countDown = random(6, 16);
             
-          }
+            break;
 
-          break;
-
-        case 2:
-
-          tank.state = TANK_STATE_STATIONARY;
-          tank.countDown = random(6, 16);
-          
-          break;
+        }
 
       }
 

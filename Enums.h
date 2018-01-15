@@ -17,6 +17,7 @@ struct Bullet {
   uint16_t yPos;
   int8_t xDelta;
   uint8_t yDelta;
+  uint8_t startYPos;
 };
 
 struct BulletExplosion {
@@ -43,6 +44,7 @@ struct Tank {
   uint8_t countDown;
   int16_t xPos;
   bool track;
+  uint8_t numberOfHits;
 };
 
 
@@ -54,10 +56,16 @@ struct Tank {
 #define BULLET_INACTIVE_X_VALUE             5000
 #define BULLET_SHOOT_HORIZONTAL             255
 
-#define TANK_STATE_DEAD                     0
-#define TANK_STATE_MOVE_LEFT                1
-#define TANK_STATE_MOVE_RIGHT               2
-#define TANK_STATE_STATIONARY               3
+#define TANK_STATE_DEAD_1                   0
+#define TANK_STATE_DEAD_2                   1
+#define TANK_STATE_DEAD_3                   2
+#define TANK_STATE_MOVE_LEFT                3
+#define TANK_STATE_MOVE_RIGHT               4
+#define TANK_STATE_STATIONARY               5
+
+#define TANK_SPACING                        400
+#define TANK_BULLET_MIN_Y_VALUE             25
+#define TANK_BULLET_NUMBER_OF_HITS          6
 
 #define TANK_TURRENT_DIR_LEFT_LOW           0
 #define TANK_TURRENT_DIR_LEFT_MID           1
