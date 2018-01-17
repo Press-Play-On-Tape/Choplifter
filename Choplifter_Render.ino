@@ -101,7 +101,7 @@ void render(uint8_t sortieNumber) {
     for (int i = 0; i < NUMBER_OF_TANKS; i++) {
 
       Tank *tank = &tanks[i];
-
+  
       if (tank->state > TANK_STATE_DEAD_1 && (tank->xPos > backgroundX - 144) && (tank->xPos < backgroundX + 144)) {
 
         arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, tank_00_mask, BLACK, false);
@@ -161,40 +161,74 @@ void render(uint8_t sortieNumber) {
     }
 
 
+
+    // Draw tank bullets ..
+
+    for (int i = 0; i < NUMBER_OF_TANK_BULLETS; i++) {
+
+      Bullet *bullet = &tankBullets[i];
+
+      if (bullet->xPos != BULLET_INACTIVE_X_VALUE) {
+  
+        if ((bullet->xPos > backgroundX - 144) && (bullet->xPos < backgroundX + 144)) {
+
+          arduboy.fillRect(backgroundX - bullet->xPos + 64 - 1, bullet->yPos, 2, 2, WHITE);
+
+        }
+    
+      }
+
+    }
+
+
+
     // Draw explosion ..
 
     if (playerBulletExplosion.xPos != BULLET_INACTIVE_X_VALUE) {
 
-        switch (playerBulletExplosion.explosionType) {
+      drawExplosion(&playerBulletExplosion);
 
-          case EXPLOSION_SML:
-          case EXPLOSION_MED:
+        // switch (playerBulletExplosion.explosionType) {
 
-            if ((playerBulletExplosion.xPos > backgroundX - 144) && (playerBulletExplosion.xPos < backgroundX + 144)) {
+        //   case EXPLOSION_SML:
+        //   case EXPLOSION_MED:
 
-              arduboy.drawCompressedMirror(backgroundX - playerBulletExplosion.xPos + 64 - 4, playerBulletExplosion.yPos, explosions[playerBulletExplosion.explosionType - 1], WHITE, false);
-              playerBulletExplosion.explosionType--;
-              if (playerBulletExplosion.explosionType == 0) playerBulletExplosion.xPos = BULLET_INACTIVE_X_VALUE;
+        //     if ((playerBulletExplosion.xPos > backgroundX - 144) && (playerBulletExplosion.xPos < backgroundX + 144)) {
 
-            }
+        //       arduboy.drawCompressedMirror(backgroundX - playerBulletExplosion.xPos + 64 - 4, playerBulletExplosion.yPos, explosions[playerBulletExplosion.explosionType - 1], WHITE, false);
+        //       playerBulletExplosion.explosionType--;
+        //       if (playerBulletExplosion.explosionType == 0) playerBulletExplosion.xPos = BULLET_INACTIVE_X_VALUE;
 
-            break;
+        //     }
 
-          case EXPLOSION_LRG_1 ... EXPLOSION_LRG_4:
+        //     break;
 
-            if ((playerBulletExplosion.xPos > backgroundX - 144) && (playerBulletExplosion.xPos < backgroundX + 144)) {
+        //   case EXPLOSION_LRG_1 ... EXPLOSION_LRG_4:
 
-              arduboy.drawCompressedMirror(backgroundX - playerBulletExplosion.xPos + 64 - 12, playerBulletExplosion.yPos, explosions_masks[playerBulletExplosion.explosionType - 1], BLACK, false);
-              arduboy.drawCompressedMirror(backgroundX - playerBulletExplosion.xPos + 64 - 12, playerBulletExplosion.yPos, explosions[playerBulletExplosion.explosionType - 1], WHITE, false);
+        //     if ((playerBulletExplosion.xPos > backgroundX - 144) && (playerBulletExplosion.xPos < backgroundX + 144)) {
 
-              playerBulletExplosion.explosionType++;
-              if (playerBulletExplosion.explosionType == EXPLOSION_LRG_4 + 1) playerBulletExplosion.xPos = BULLET_INACTIVE_X_VALUE;
+        //       arduboy.drawCompressedMirror(backgroundX - playerBulletExplosion.xPos + 64 - 12, playerBulletExplosion.yPos, explosions_masks[playerBulletExplosion.explosionType - 1], BLACK, false);
+        //       arduboy.drawCompressedMirror(backgroundX - playerBulletExplosion.xPos + 64 - 12, playerBulletExplosion.yPos, explosions[playerBulletExplosion.explosionType - 1], WHITE, false);
 
-            }
+        //       playerBulletExplosion.explosionType++;
+        //       if (playerBulletExplosion.explosionType == EXPLOSION_LRG_4 + 1) playerBulletExplosion.xPos = BULLET_INACTIVE_X_VALUE;
 
-            break;
+        //     }
 
-        }
+        //     break;
+
+        // }
+
+    }
+
+
+
+    // Draw tank explosion ..
+
+
+    if (tankBulletExplosion.xPos != BULLET_INACTIVE_X_VALUE) {
+
+      drawExplosion(&tankBulletExplosion);
 
     }
 
@@ -279,3 +313,37 @@ void render(uint8_t sortieNumber) {
 
 }
 
+void drawExplosion(BulletExplosion *bulletExplosion) {
+
+    switch (bulletExplosion->explosionType) {
+
+      case EXPLOSION_SML:
+      case EXPLOSION_MED:
+
+        if ((bulletExplosion->xPos > backgroundX - 144) && (bulletExplosion->xPos < backgroundX + 144)) {
+
+          arduboy.drawCompressedMirror(backgroundX - bulletExplosion->xPos + 64 - 4, bulletExplosion->yPos, explosions[bulletExplosion->explosionType - 1], WHITE, false);
+          bulletExplosion->explosionType--;
+          if (bulletExplosion->explosionType == 0) bulletExplosion->xPos = BULLET_INACTIVE_X_VALUE;
+
+        }
+
+        break;
+
+      case EXPLOSION_LRG_1 ... EXPLOSION_LRG_4:
+
+        if ((bulletExplosion->xPos > backgroundX - 144) && (bulletExplosion->xPos < backgroundX + 144)) {
+
+          arduboy.drawCompressedMirror(backgroundX - bulletExplosion->xPos + 64 - 12, bulletExplosion->yPos, explosions_masks[bulletExplosion->explosionType - 1], BLACK, false);
+          arduboy.drawCompressedMirror(backgroundX - bulletExplosion->xPos + 64 - 12, bulletExplosion->yPos, explosions[bulletExplosion->explosionType - 1], WHITE, false);
+
+          bulletExplosion->explosionType++;
+          if (bulletExplosion->explosionType == EXPLOSION_LRG_4 + 1) bulletExplosion->xPos = BULLET_INACTIVE_X_VALUE;
+
+        }
+
+        break;
+
+    }
+    
+}

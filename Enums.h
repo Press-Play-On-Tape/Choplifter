@@ -14,7 +14,7 @@ enum class GameState : uint8_t {
 
 struct Bullet {
   int16_t xPos;
-  uint16_t yPos;
+  uint8_t yPos;
   int8_t xDelta;
   uint8_t yDelta;
   uint8_t startYPos;
@@ -44,6 +44,7 @@ struct Tank {
   uint8_t countDown;
   int16_t xPos;
   bool track;
+
   uint8_t numberOfHits;
 };
 
@@ -63,6 +64,7 @@ struct Tank {
 #define TANK_STATE_MOVE_RIGHT               4
 #define TANK_STATE_STATIONARY               5
 
+#define NUMBER_OF_TANK_BULLETS              2
 #define TANK_SPACING                        400
 #define TANK_BULLET_MIN_Y_VALUE             25
 #define TANK_BULLET_NUMBER_OF_HITS          6

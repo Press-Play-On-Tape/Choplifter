@@ -17,13 +17,15 @@ uint8_t prevTurn = PREV_TURN_FROM_LEFT;
 int8_t backgroundXOffset = 0;
 int16_t backgroundX = 0;
 
-Stack <uint8_t, 20> playerStack;
+Stack <uint8_t, 10> playerStack;
 
 Hostage hostages[NUMBER_OF_HOSTAGES];
 Dormitory dormitories[NUMBER_OF_DORMITORIES];
 Tank tanks[NUMBER_OF_TANKS];
 Bullet playerBullets[NUMBER_OF_PLAYER_BULLETS];
+Bullet tankBullets[NUMBER_OF_TANK_BULLETS];
 BulletExplosion playerBulletExplosion;
+BulletExplosion tankBulletExplosion;
 
 uint8_t dead = 0;
 uint8_t safe = 0;
@@ -233,9 +235,11 @@ void play() {
 
   if (y - deltaY < 38 && y > 38) {  // Check to see if we just landed.
 
+
     for (int i = 0; i < NUMBER_OF_HOSTAGES; i++) {
 
       Hostage *hostage = &hostages[i];
+      int16_t diff = absT(hostage->xPos - backgroundX);
 
       if (hostage->stance >= HOSTAGE_RUNNING_LEFT_1 && hostage->stance <= HOSTAGE_WAVING_22) {
 
@@ -245,7 +249,7 @@ void play() {
           case 13 ... 17:
           case 20:
       
-            if (absT(hostage->xPos - backgroundX) < 7) {
+            if (diff < 7) {
 
               hostage->stance = HOSTAGE_DYING_2;
               dead++;
@@ -257,7 +261,7 @@ void play() {
           case 7 ... 12:
           case 18 ... 19:
 
-            if (absT(hostage->xPos - backgroundX) < 4) {
+            if (diff < 4) {
 
               hostages->stance = HOSTAGE_DYING_2;
               dead++;
@@ -387,7 +391,8 @@ void play() {
 
                 Tank *tank = &tanks[i];
 
-                if (bullet->startYPos > TANK_BULLET_MIN_Y_VALUE && absT(tank->xPos - bullet->xPos) < 16) {  // Bullets that hit tank must be fired from down low ..
+//SJH                if (bullet->startYPos > TANK_BULLET_MIN_Y_VALUE && absT(tank->xPos - bullet->xPos) < 16) {  // Bullets that hit tank must be fired from down low ..
+                if (absT(tank->xPos - bullet->xPos) < 16) {  // Bullets that hit tank must be fired from down low ..
 
                   playerBulletExplosion.xPos = bullet->xPos;
                   playerBulletExplosion.yPos = (absT(tank->xPos - bullet->xPos) < 8 ? 46 : 51);
@@ -524,11 +529,6 @@ void play() {
   render(0);
 
 
-//  arduboy.drawCompressedMirror(0, 0, score_left_mask, BLACK, false);
-//  arduboy.drawCompressedMirror(0, 0, score_left, WHITE, false);
-
-
-
   // -- DEBUG -------------------------------------------------------------------------------
 
   #ifdef DEBUG
@@ -548,8 +548,6 @@ void play() {
   #endif
 
   // ----------------------------------------------------------------------------------------
-
-
 
 
   
