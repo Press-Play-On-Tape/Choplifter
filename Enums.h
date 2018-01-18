@@ -67,7 +67,7 @@ struct Tank {
 #define NUMBER_OF_TANK_BULLETS              2
 #define TANK_SPACING                        400
 #define TANK_BULLET_MIN_Y_VALUE             25
-#define TANK_BULLET_NUMBER_OF_HITS          6
+#define TANK_BULLET_NUMBER_OF_HITS          4
 
 #define TANK_TURRENT_DIR_LEFT_LOW           0
 #define TANK_TURRENT_DIR_LEFT_MID           1
@@ -115,9 +115,14 @@ struct Tank {
 #define HOSTAGE_IN_HELICOPTER               18
 #define HOSTAGE_FAR_RIGHT_POS               210
 
+#define EXPLOSION_NONE                      0
 #define EXPLOSION_SML                       1
 #define EXPLOSION_MED                       2
-#define EXPLOSION_LRG_1                     3
-#define EXPLOSION_LRG_2                     4
-#define EXPLOSION_LRG_3                     5
-#define EXPLOSION_LRG_4                     6
+#define EXPLOSION_BOTH_NONE                 3
+#define EXPLOSION_BOTH_SML                  4
+#define EXPLOSION_BOTH_MED                  5
+#define EXPLOSION_LRG_1                     6
+#define EXPLOSION_LRG_2                     7
+#define EXPLOSION_LRG_3                     8
+#define EXPLOSION_LRG_4                     9
+#define EXPLOSION_LRG_END                   10

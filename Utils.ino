@@ -29,6 +29,9 @@ int8_t calcSpeed(int8_t initValue, bool increase) {
       
   switch (initValue) {
 
+    case 8:
+      if (!increase) return 4;
+    
     case 4: 
       if (increase)  return 4;
       if (!increase) return 2;
@@ -56,6 +59,9 @@ int8_t calcSpeed(int8_t initValue, bool increase) {
     case -4:
       if (increase)  return -2;
       if (!increase) return -4;
+
+    case -8:
+      if (increase)  return -4;
 
     default: break;
 

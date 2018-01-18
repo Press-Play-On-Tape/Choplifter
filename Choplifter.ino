@@ -13,6 +13,7 @@ uint8_t incX = DELTA_X_DO_NOTHING;
 int8_t deltaX = 0;
 int8_t deltaY = 0;
 uint8_t prevTurn = PREV_TURN_FROM_LEFT; 
+uint8_t hits = 0;
 
 int8_t backgroundXOffset = 0;
 int16_t backgroundX = 0;
@@ -48,24 +49,36 @@ void resetGame() {
   dormitories[1] = { DORMITORY_STATE_INTACT,  (DORMITORY_SPACING * 2) };
   dormitories[2] = { DORMITORY_STATE_INTACT,  (DORMITORY_SPACING * 3) };
   dormitories[3] = { DORMITORY_STATE_INTACT,  (DORMITORY_SPACING * 4) };
-
+/* SJH
   tanks[0] = {TANK_STATE_STATIONARY, 0, 5, (1 * TANK_SPACING) + random(100, 600), true};
   tanks[1] = {TANK_STATE_STATIONARY, 0, 5, (2 * TANK_SPACING) + random(100, 600), true};
   tanks[2] = {TANK_STATE_STATIONARY, 0, 5, (3 * TANK_SPACING) + random(100, 600), true};
   tanks[3] = {TANK_STATE_STATIONARY, 0, 5, (4 * TANK_SPACING) + random(100, 600), true};
   tanks[4] = {TANK_STATE_STATIONARY, 0, 5, (5 * TANK_SPACING) + random(100, 600), true};
   tanks[5] = {TANK_STATE_STATIONARY, 0, 5, (6 * TANK_SPACING) + random(100, 600), true};
-  
+*/  
+  tanks[0] = {TANK_STATE_STATIONARY, 0, 5, (1 * TANK_SPACING) + random(100, 600), true};
+  tanks[1] = {TANK_STATE_DEAD_1, 0, 5, (2 * TANK_SPACING) + random(100, 600), true};
+  tanks[2] = {TANK_STATE_DEAD_1, 0, 5, (3 * TANK_SPACING) + random(100, 600), true};
+  tanks[3] = {TANK_STATE_DEAD_1, 0, 5, (4 * TANK_SPACING) + random(100, 600), true};
+  tanks[4] = {TANK_STATE_DEAD_1, 0, 5, (5 * TANK_SPACING) + random(100, 600), true};
+  tanks[5] = {TANK_STATE_DEAD_1, 0, 5, (6 * TANK_SPACING) + random(100, 600), true};
 
-  for (int i = 0; i < 64; i++) {
+  for (int i = 0; i < NUMBER_OF_HOSTAGES; i++) {
      
-      hostages[i] = { (i < 16 ? HOSTAGE_LEAVING_DORM : HOSTAGE_IN_DORM), ((i % 16) * 15) + 10, dormitories[i / 16].xPos };
+      hostages[i] = { (i < 1 /*SJH 6*/ ? HOSTAGE_LEAVING_DORM : HOSTAGE_IN_DORM), ((i % 16) * 15) + 10, dormitories[i / 16].xPos };
 
   }
 
   for (int i = 0; i < NUMBER_OF_PLAYER_BULLETS; i++) {
      
-      playerBullets[i] = { BULLET_INACTIVE_X_VALUE, 0, 0 };
+      playerBullets[i] = { BULLET_INACTIVE_X_VALUE, 0, 0, 0, 0 };
+
+  }
+
+  for (int i = 0; i < NUMBER_OF_TANK_BULLETS; i++) {
+     
+      tankBullets[i] = { BULLET_INACTIVE_X_VALUE, 0, 0, 0, 0 };
 
   }
 
@@ -307,224 +320,167 @@ void play() {
 
       // Check to see if we hit anything ..
 
-      switch (bullet->yPos) {
+      bulletHit(bullet, &playerBulletExplosion, true);
 
-        case 40 ... 46:               // Hitting a dormitory?
+//       switch (bullet->yPos) {
 
-          for (uint8_t i = 0; i < NUMBER_OF_DORMITORIES; i++) {
+//         case 40 ... 46:               // Hitting a dormitory?
 
-            Dormitory *dormitory = &dormitories[i];
+//           for (uint8_t i = 0; i < NUMBER_OF_DORMITORIES; i++) {
 
-            if (dormitory->state == DORMITORY_STATE_INTACT && absT(dormitory->xPos - bullet->xPos) < 16) {
+//             Dormitory *dormitory = &dormitories[i];
 
-               dormitory->numberOfHits++;
+//             if (dormitory->state == DORMITORY_STATE_INTACT && absT(dormitory->xPos - bullet->xPos) < 16) {
+
+//                dormitory->numberOfHits++;
                
-               playerBulletExplosion.xPos = bullet->xPos;
-               playerBulletExplosion.yPos = 36 + (absT(dormitory->xPos - bullet->xPos) / 3);
-               playerBulletExplosion.explosionType = EXPLOSION_MED;
+//                playerBulletExplosion.xPos = bullet->xPos;
+//                playerBulletExplosion.yPos = 36 + (absT(dormitory->xPos - bullet->xPos) / 3);
+//                playerBulletExplosion.explosionType = EXPLOSION_MED;
 
-               if (dormitory->numberOfHits == DORMITORY_HITS_REQUIRED) {
+//                if (dormitory->numberOfHits == DORMITORY_HITS_REQUIRED) {
 
-                dormitory->state = DORMITORY_STATE_OPEN;
-                playerBulletExplosion.xPos = bullet->xPos;
-                playerBulletExplosion.yPos = 36 + (absT(dormitory->xPos - bullet->xPos) / 3);
-                playerBulletExplosion.explosionType = EXPLOSION_LRG_1;
+//                 dormitory->state = DORMITORY_STATE_OPEN;
+//                 playerBulletExplosion.xPos = bullet->xPos;
+//                 playerBulletExplosion.yPos = 36 + (absT(dormitory->xPos - bullet->xPos) / 3);
+//                 playerBulletExplosion.explosionType = EXPLOSION_LRG_1;
 
 
-                // Release the hostages ..
+//                 // Release the hostages ..
 
-                uint8_t count = 0;
+//                 uint8_t count = 0;
 
-                for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
+//                 for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
 
-                  Hostage *hostage = &hostages[i];
+//                   Hostage *hostage = &hostages[i];
 
-                  if (hostage->stance == HOSTAGE_IN_DORM) {
+//                   if (hostage->stance == HOSTAGE_IN_DORM) {
                    
-                    hostages[i] = { HOSTAGE_LEAVING_DORM, (count * 15) + 10, dormitories[ ((backgroundX + DORMITORY_SPACING_FUDGE) / DORMITORY_SPACING) - 1].xPos };
-                    count++;
-                    if (count == DORMITORY_HOSTAGE_CAPACITY) { break; }
+//                     hostage->stance = HOSTAGE_LEAVING_DORM;
+//                     hostage->xPos = dormitory->xPos + 16;
+//                     hostage->countDown = (count * 15) + 10;
+//                     count++;
 
-                  }
+//                     if (count == DORMITORY_HOSTAGE_CAPACITY) { break; }
 
-                }
+//                   }
 
-               } 
+//                 }
 
-               bullet->xPos = BULLET_INACTIVE_X_VALUE;
+//                } 
 
-            }
+//                bullet->xPos = BULLET_INACTIVE_X_VALUE;
 
-          }
+//             }
 
-          break;
+//           }
 
-        case 47 ... 52:               // Hitting a hostage or the tank?
-          {
-            bool hit = false;
+//           break;
 
-            for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
+//         case 47 ... 52:               // Hitting a hostage or the tank?
+//           {
+//             bool hit = false;
+
+//             for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
   
-              Hostage *hostage = &hostages[i];
+//               Hostage *hostage = &hostages[i];
 
-              if (hostage->stance >= HOSTAGE_RUNNING_LEFT_1 && 
-                  hostage->stance <= HOSTAGE_WAVING_22 && 
-                  absT(hostage->xPos - bullet->xPos) < 3) {
+//               if (hostage->stance >= HOSTAGE_RUNNING_LEFT_1 && 
+//                   hostage->stance <= HOSTAGE_WAVING_22 && 
+//                   absT(hostage->xPos - bullet->xPos) < 3) {
 
-                playerBulletExplosion.xPos = bullet->xPos;
-                playerBulletExplosion.yPos = 52;
-                playerBulletExplosion.explosionType = EXPLOSION_MED;
-                bullet->xPos = BULLET_INACTIVE_X_VALUE;
+//                 playerBulletExplosion.xPos = bullet->xPos;
+//                 playerBulletExplosion.yPos = 52;
+//                 playerBulletExplosion.explosionType = EXPLOSION_MED;
+//                 bullet->xPos = BULLET_INACTIVE_X_VALUE;
 
-                hostage->stance = HOSTAGE_DYING_2;
-                dead++;
-                hit = true;
-                break;
+//                 hostage->stance = HOSTAGE_DYING_2;
+//                 dead++;
+//                 hit = true;
+//                 break;
 
-              }
+//               }
 
-            }
+//             }
 
-            if (!hit) {
+//             if (!hit) {
 
-              for (uint8_t i = 0; i < NUMBER_OF_TANKS; i++) {
+//               for (uint8_t i = 0; i < NUMBER_OF_TANKS; i++) {
 
-                Tank *tank = &tanks[i];
+//                 Tank *tank = &tanks[i];
 
-//SJH                if (bullet->startYPos > TANK_BULLET_MIN_Y_VALUE && absT(tank->xPos - bullet->xPos) < 16) {  // Bullets that hit tank must be fired from down low ..
-                if (absT(tank->xPos - bullet->xPos) < 16) {  // Bullets that hit tank must be fired from down low ..
+// //SJH                if (bullet->startYPos > TANK_BULLET_MIN_Y_VALUE && absT(tank->xPos - bullet->xPos) < 16) {  // Bullets that hit tank must be fired from down low ..
+//                 if (absT(tank->xPos - bullet->xPos) < 16) {  
 
-                  playerBulletExplosion.xPos = bullet->xPos;
-                  playerBulletExplosion.yPos = (absT(tank->xPos - bullet->xPos) < 8 ? 46 : 51);
-                  playerBulletExplosion.explosionType = EXPLOSION_MED;
-                  bullet->xPos = BULLET_INACTIVE_X_VALUE;
+//                   playerBulletExplosion.xPos = bullet->xPos;
+//                   playerBulletExplosion.yPos = (absT(tank->xPos - bullet->xPos) < 8 ? 46 : 51);
+//                   playerBulletExplosion.explosionType = EXPLOSION_MED;
+//                   bullet->xPos = BULLET_INACTIVE_X_VALUE;
 
-                  tank->numberOfHits++;
+//                   tank->numberOfHits++;
 
-                  if (tank->numberOfHits == TANK_BULLET_NUMBER_OF_HITS) {
+//                   if (tank->numberOfHits == TANK_BULLET_NUMBER_OF_HITS) {
 
-                    playerBulletExplosion.yPos = 50;
-                    playerBulletExplosion.explosionType = EXPLOSION_LRG_1;
-                    tank->state = TANK_STATE_DEAD_3;
+//                     playerBulletExplosion.yPos = 50;
+//                     playerBulletExplosion.explosionType = EXPLOSION_LRG_1;
+//                     tank->state = TANK_STATE_DEAD_3;
 
-                  }
+//                   }
 
-                }
+//                 }
 
-              }
+//               }
 
-            }
+//             }
 
-          }
-          break;
+//           }
+//           break;
 
-        case 61 ... 74:               //  Hitting the ground ..
-          playerBulletExplosion.xPos = bullet->xPos;
-          playerBulletExplosion.yPos = 60;
-          playerBulletExplosion.explosionType = EXPLOSION_SML;
-          bullet->xPos = BULLET_INACTIVE_X_VALUE;
-          break;
+//         case 61 ... 74:               //  Hitting the ground ..
+//           playerBulletExplosion.xPos = bullet->xPos;
+//           playerBulletExplosion.yPos = 60;
+//           playerBulletExplosion.explosionType = EXPLOSION_SML;
+//           bullet->xPos = BULLET_INACTIVE_X_VALUE;
+//           break;
 
-      }
+//       }
+
+    }
+
+  }
+
+
+
+
+  // Update bullets ..
+
+  for (int i = 0; i < NUMBER_OF_TANK_BULLETS; i++) {
+
+    Bullet *bullet = &tankBullets[i];
+
+    if (bullet->xPos != BULLET_INACTIVE_X_VALUE) {
+
+
+      // Update bullet position ..
+
+      bullet->xPos = bullet->xPos - bullet->xDelta;
+      if (absT(bullet->xPos - backgroundX) > 70) { bullet->xPos = BULLET_INACTIVE_X_VALUE; }
+
+      bullet->yPos = bullet->yPos + bullet->yDelta;
+      bullet->yDelta = calcSpeed(bullet->yDelta, true);
+
+
+      // Check to see if we hit anything?
+
+      bulletHit(bullet, &tankBulletExplosion, false);
 
     }
 
   }
 
+  // Update tank movements ..
 
-  // Update tank ..
-
-  for (int i=0; i < NUMBER_OF_TANKS; i++) {
-
-    Tank *tank = &tanks[i];
-
-    int16_t tankDif = tank->xPos - backgroundX;
-
-    if (tank->state > TANK_STATE_DEAD_3) {
-
-      switch (tank->state) {
-
-        case TANK_STATE_MOVE_LEFT:
-          tank->xPos+=2;
-          break;
-
-        case TANK_STATE_MOVE_RIGHT:
-
-          if (tank->xPos > TANK_FAR_RIGHT_POS) {
-            tank->xPos-=2;
-          }
-          else {
-            tank->state = TANK_STATE_STATIONARY;
-          }
-          break;
-
-      }
-
-
-      // Move turrent ..
-
-      switch (tankDif) {
-
-        case -999 ... -40:
-          tank->turrentDirection = TANK_TURRENT_DIR_LEFT_LOW;
-          break;
-
-        case -39 ... -10:
-          tank->turrentDirection = TANK_TURRENT_DIR_LEFT_MID;
-          break;
-
-        case -9 ... 9:
-          tank->turrentDirection = TANK_TURRENT_DIR_UPRIGHT;
-          break;
-
-        case 10 ... 39:
-          tank->turrentDirection = TANK_TURRENT_DIR_RIGHT_MID;
-          break;
-
-        case 40 ... 999:
-          tank->turrentDirection = TANK_TURRENT_DIR_RIGHT_LOW;
-          break;
-
-      }
-
-
-      tank->countDown--;
-
-      if (tank->countDown == 0) {
-
-        switch (random(0, 3)) {
-
-          case 0 ... 1:
-
-            if (tankDif < -20) {
-
-              tank->state = TANK_STATE_MOVE_LEFT;
-              tank->countDown = random(6, 16);
-
-            }
-            else if (tankDif > 20) {
-
-              tank->state = TANK_STATE_MOVE_RIGHT;
-              tank->countDown = random(6, 16);
-              
-            }
-
-            break;
-
-          case 2:
-
-            tank->state = TANK_STATE_STATIONARY;
-            tank->countDown = random(6, 16);
-            
-            break;
-
-        }
-
-      }
-
-    }
-
-  }
+  tankMovements();
 
   render(0);
 
@@ -563,3 +519,207 @@ void play() {
 }
 
 
+void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
+
+
+  // Check to see if a tank bullet hit the helicopter (it can be at any height) ..
+  
+  {
+    Rect hitZone = {50, 0, 0, 0};
+
+    if (!playerBullet) {
+
+      switch (absT(image)) {
+
+        case 1 ... 3:
+        case 13 ... 17:
+        case 20:
+    
+          hitZone.x = 50;
+          hitZone.y = y + 5;
+          hitZone.width = 28;
+          hitZone.height = 12;
+
+          break;
+
+        case 4 ... 6:
+    
+          hitZone.x = 50;
+          hitZone.y = y + 7;
+          hitZone.width = 28;
+          hitZone.height = 12;
+
+          break;
+
+        case 7 ... 12:
+        case 18 ... 19:
+
+          hitZone.x = 57;
+          hitZone.y = y + 5;
+          hitZone.width = 14;
+          hitZone.height = 13;
+
+          break;
+
+      }
+
+      Point pt = { 64 + bullet->xPos - backgroundX, bullet->yPos };
+//     arduboy.setCursor(1, 10);
+//     arduboy.print(pt.x);
+//     arduboy.print(",");
+//     arduboy.print(pt.y);
+// arduboy.drawRect(hitZone.x, hitZone.y, hitZone.width, hitZone.height);
+
+      if (arduboy.collide(pt, hitZone)) {
+    // arduboy.setCursor(1, 20);
+    // arduboy.print(hits);
+
+        explosion->xPos = bullet->xPos;
+        explosion->yPos = hitZone.y - 4;
+        explosion->explosionType = EXPLOSION_BOTH_MED;
+        bullet->xPos = BULLET_INACTIVE_X_VALUE;
+
+        hits++;
+
+        if (hits == TANK_BULLET_NUMBER_OF_HITS) {
+
+          explosion->yPos = 50;
+          explosion->explosionType = EXPLOSION_LRG_1;
+          //tank->state = TANK_STATE_DEAD_3;
+
+        }
+
+      }
+
+    }
+
+  }
+
+
+
+  // Check to see if we hit anything ..
+
+  switch (bullet->yPos) {
+
+    case 40 ... 46:               // Hitting a dormitory?
+
+      for (uint8_t i = 0; i < NUMBER_OF_DORMITORIES; i++) {
+
+        Dormitory *dormitory = &dormitories[i];
+
+        if (dormitory->state == DORMITORY_STATE_INTACT && absT(dormitory->xPos - bullet->xPos) < 16) {
+
+            dormitory->numberOfHits++;
+            
+            explosion->xPos = bullet->xPos;
+            explosion->yPos = 36 + (absT(dormitory->xPos - bullet->xPos) / 3);
+            explosion->explosionType = EXPLOSION_MED;
+
+            if (dormitory->numberOfHits == DORMITORY_HITS_REQUIRED) {
+
+            dormitory->state = DORMITORY_STATE_OPEN;
+            explosion->xPos = bullet->xPos;
+            explosion->yPos = 36 + (absT(dormitory->xPos - bullet->xPos) / 3);
+            explosion->explosionType = EXPLOSION_LRG_1;
+
+
+            // Release the hostages ..
+
+            uint8_t count = 0;
+
+            for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
+
+              Hostage *hostage = &hostages[i];
+
+              if (hostage->stance == HOSTAGE_IN_DORM) {
+                
+                hostage->stance = HOSTAGE_LEAVING_DORM;
+                hostage->xPos = dormitory->xPos + 16;
+                hostage->countDown = (count * 15) + 10;
+                count++;
+
+                if (count == DORMITORY_HOSTAGE_CAPACITY) { break; }
+
+              }
+
+            }
+
+            } 
+
+            bullet->xPos = BULLET_INACTIVE_X_VALUE;
+
+        }
+
+      }
+
+      break;
+
+    case 47 ... 52:               // Hitting a hostage or the tank?
+      {
+        bool hit = false;
+
+        for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
+
+          Hostage *hostage = &hostages[i];
+
+          if (hostage->stance >= HOSTAGE_RUNNING_LEFT_1 && 
+              hostage->stance <= HOSTAGE_WAVING_22 && 
+              absT(hostage->xPos - bullet->xPos) < 3) {
+
+            explosion->xPos = bullet->xPos;
+            explosion->yPos = 52;
+            explosion->explosionType = EXPLOSION_MED;
+            bullet->xPos = BULLET_INACTIVE_X_VALUE;
+
+            hostage->stance = HOSTAGE_DYING_2;
+            dead++;
+            hit = true;
+            break;
+
+          }
+
+        }
+
+        if (!hit && playerBullet) {
+
+          for (uint8_t i = 0; i < NUMBER_OF_TANKS; i++) {
+
+            Tank *tank = &tanks[i];
+
+//SJH                if (bullet->startYPos > TANK_BULLET_MIN_Y_VALUE && absT(tank->xPos - bullet->xPos) < 16) {  // Bullets that hit tank must be fired from down low ..
+            if (absT(tank->xPos - bullet->xPos) < 16) {  
+
+              explosion->xPos = bullet->xPos;
+              explosion->yPos = (absT(tank->xPos - bullet->xPos) < 8 ? 46 : 51);
+              explosion->explosionType = EXPLOSION_MED;
+              bullet->xPos = BULLET_INACTIVE_X_VALUE;
+
+              tank->numberOfHits++;
+
+              if (tank->numberOfHits == TANK_BULLET_NUMBER_OF_HITS) {
+
+                explosion->yPos = 50;
+                explosion->explosionType = EXPLOSION_LRG_1;
+                tank->state = TANK_STATE_DEAD_3;
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+      break;
+
+    case 61 ... 74:               //  Hitting the ground ..
+      explosion->xPos = bullet->xPos;
+      explosion->yPos = 60;
+      explosion->explosionType = EXPLOSION_SML;
+      bullet->xPos = BULLET_INACTIVE_X_VALUE;
+      break;
+
+  }
+
+}

@@ -320,11 +320,14 @@ void drawExplosion(BulletExplosion *bulletExplosion) {
       case EXPLOSION_SML:
       case EXPLOSION_MED:
 
+      case EXPLOSION_BOTH_SML:
+      case EXPLOSION_BOTH_MED:
+
         if ((bulletExplosion->xPos > backgroundX - 144) && (bulletExplosion->xPos < backgroundX + 144)) {
 
-          arduboy.drawCompressedMirror(backgroundX - bulletExplosion->xPos + 64 - 4, bulletExplosion->yPos, explosions[bulletExplosion->explosionType - 1], WHITE, false);
+          arduboy.drawCompressedMirror(backgroundX - bulletExplosion->xPos + 64 - 4, bulletExplosion->yPos, explosions[bulletExplosion->explosionType], WHITE, false);
           bulletExplosion->explosionType--;
-          if (bulletExplosion->explosionType == 0) bulletExplosion->xPos = BULLET_INACTIVE_X_VALUE;
+          if (bulletExplosion->explosionType == EXPLOSION_NONE || bulletExplosion->explosionType == EXPLOSION_BOTH_NONE) bulletExplosion->xPos = BULLET_INACTIVE_X_VALUE;
 
         }
 
@@ -334,11 +337,11 @@ void drawExplosion(BulletExplosion *bulletExplosion) {
 
         if ((bulletExplosion->xPos > backgroundX - 144) && (bulletExplosion->xPos < backgroundX + 144)) {
 
-          arduboy.drawCompressedMirror(backgroundX - bulletExplosion->xPos + 64 - 12, bulletExplosion->yPos, explosions_masks[bulletExplosion->explosionType - 1], BLACK, false);
-          arduboy.drawCompressedMirror(backgroundX - bulletExplosion->xPos + 64 - 12, bulletExplosion->yPos, explosions[bulletExplosion->explosionType - 1], WHITE, false);
+          arduboy.drawCompressedMirror(backgroundX - bulletExplosion->xPos + 64 - 12, bulletExplosion->yPos, explosions_masks[bulletExplosion->explosionType], BLACK, false);
+          arduboy.drawCompressedMirror(backgroundX - bulletExplosion->xPos + 64 - 12, bulletExplosion->yPos, explosions[bulletExplosion->explosionType], WHITE, false);
 
           bulletExplosion->explosionType++;
-          if (bulletExplosion->explosionType == EXPLOSION_LRG_4 + 1) bulletExplosion->xPos = BULLET_INACTIVE_X_VALUE;
+          if (bulletExplosion->explosionType == EXPLOSION_LRG_END) bulletExplosion->xPos = BULLET_INACTIVE_X_VALUE;
 
         }
 
