@@ -582,8 +582,8 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
         hits++;
 
         if (hits == TANK_BULLET_NUMBER_OF_HITS) {
-
-          explosion->yPos = 50;
+    // arduboy.setCursor(1, 20);
+    // arduboy.print(hits);
           explosion->explosionType = EXPLOSION_LRG_1;
           //tank->state = TANK_STATE_DEAD_3;
 

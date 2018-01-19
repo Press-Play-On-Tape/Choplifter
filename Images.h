@@ -956,7 +956,7 @@ NULL, explosion_01, explosion_02, NULL, explosion_07, explosion_08, explosion_03
 };
 
 const uint8_t* const explosions_masks[] = { 
-explosion_03_mask, explosion_03_mask, explosion_03_mask, explosion_04_mask, explosion_05_mask, explosion_06_mask, 
+NULL, NULL, NULL, NULL, NULL, NULL, explosion_03_mask, explosion_04_mask, explosion_05_mask, explosion_06_mask, 
 };
 
 
