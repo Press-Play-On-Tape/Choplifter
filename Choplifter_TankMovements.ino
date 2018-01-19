@@ -12,23 +12,23 @@ void tankMovements() {
 
     Tank *tank = &tanks[i];
 
-    int16_t tankDif = tank->xPos - backgroundX;
+    int16_t tankDif = tank->xPos - heli.xPos;
 
-    if (tank->state > TANK_STATE_DEAD_3) {
+    if (tank->state > TankState::Dead3) {
 
       switch (tank->state) {
 
-        case TANK_STATE_MOVE_LEFT:
+        case TankState::Move_Left:
           tank->xPos+=2;
           break;
 
-        case TANK_STATE_MOVE_RIGHT:
+        case TankState::Move_Right:
 
           if (tank->xPos > TANK_FAR_RIGHT_POS) {
             tank->xPos-=2;
           }
           else {
-            tank->state = TANK_STATE_STATIONARY;
+            tank->state = TankState::Stationary;
           }
           break;
 
@@ -40,23 +40,23 @@ void tankMovements() {
       switch (tankDif) {
 
         case -999 ... -40:
-          tank->turrentDirection = TANK_TURRENT_DIR_LEFT_LOW;
+          tank->turrentDirection = TurrentDirection::Left_Low;
           break;
 
         case -39 ... -10:
-          tank->turrentDirection = TANK_TURRENT_DIR_LEFT_MID;
+          tank->turrentDirection = TurrentDirection::Left_Mid;
           break;
 
         case -9 ... 9:
-          tank->turrentDirection = TANK_TURRENT_DIR_UPRIGHT;
+          tank->turrentDirection = TurrentDirection::Upright;
           break;
 
         case 10 ... 39:
-          tank->turrentDirection = TANK_TURRENT_DIR_RIGHT_MID;
+          tank->turrentDirection = TurrentDirection::Right_Mid;
           break;
 
         case 40 ... 999:
-          tank->turrentDirection = TANK_TURRENT_DIR_RIGHT_LOW;
+          tank->turrentDirection = TurrentDirection::Right_Low;
           break;
 
       }
@@ -72,12 +72,12 @@ void tankMovements() {
 
             if (tankDif < -20) {
 
-              tank->state = TANK_STATE_MOVE_LEFT;
+              tank->state = TankState::Move_Left;
 
             }
             else if (tankDif > 20) {
 
-              tank->state = TANK_STATE_MOVE_RIGHT;
+              tank->state = TankState::Move_Right;
               
             }
 
@@ -85,7 +85,7 @@ void tankMovements() {
 
           case 2:
 
-            tank->state = TANK_STATE_STATIONARY;
+            tank->state = TankState::Stationary;
             
             break;
 
@@ -114,27 +114,27 @@ void tankMovements() {
 
               switch (tank->turrentDirection) {
 
-                case TANK_TURRENT_DIR_LEFT_LOW:
+                case TurrentDirection::Left_Low:
                   bullet->xPos = tank->xPos + 11;
                   bullet->xDelta = -4;
                   break;
 
-                case TANK_TURRENT_DIR_LEFT_MID:
+                case TurrentDirection::Left_Mid:
                   bullet->xPos = tank->xPos + 9;
                   bullet->xDelta = -2;
                   break;
 
-                case TANK_TURRENT_DIR_UPRIGHT:
+                case TurrentDirection::Upright:
                   bullet->xPos = tank->xPos;
                   bullet->xDelta = random(-1, 2);
                   break;
 
-                case TANK_TURRENT_DIR_RIGHT_MID:
+                case TurrentDirection::Right_Mid:
                   bullet->xPos = tank->xPos - 9;
                   bullet->xDelta = 2;
                   break;
 
-                case TANK_TURRENT_DIR_RIGHT_LOW:
+                case TurrentDirection::Right_Low:
                   bullet->xPos = tank->xPos - 11;
                   bullet->xDelta = 4;
                   break;

@@ -10,9 +10,9 @@ void playerMovements() {
 
   if (arduboy.pressed(UP_BUTTON)) {
 
-    if (y > HELICOPTER_MAXIMUM_HEIGHT) {
+    if (heli.yPos > HELICOPTER_MAXIMUM_HEIGHT) {
 
-      deltaY = calcSpeed(deltaY, false);  
+      heli.yDelta = calcSpeed(heli.yDelta, false);  
 
     }
 
@@ -20,9 +20,9 @@ void playerMovements() {
   
   else {
     
-    if (y < HELICOPTER_MINIMUM_HEIGHT) {
+    if (heli.yPos < HELICOPTER_MINIMUM_HEIGHT) {
 
-      deltaY = calcSpeed(deltaY, true);  
+      heli.yDelta = calcSpeed(heli.yDelta, true);  
 
     }
 
@@ -33,25 +33,25 @@ void playerMovements() {
 
   if (arduboy.pressed(B_BUTTON)) {
 
-    if (deltaX == 0) {
+    if (heli.xDelta == 0) {
 
-      switch (image) {
+      switch (heli.stance) {
 
         case 1:
           playerStack.push(10, 9);
           playerStack.push(8, 7);
-          prevTurn = PREV_TURN_FROM_LEFT;
+          heli.prevTurn = PREV_TURN_FROM_LEFT;
           break;
 
         case -1:
           playerStack.push(10, -9);
           playerStack.push(-8, -7);
-          prevTurn = PREV_TURN_FROM_RIGHT;
+          heli.prevTurn = PREV_TURN_FROM_RIGHT;
           break;
 
         case 10:
 
-          if (prevTurn == PREV_TURN_FROM_LEFT) {
+          if (heli.prevTurn == PREV_TURN_FROM_LEFT) {
             playerStack.push(-1, -7);
             playerStack.push(-8, -9);
           }
@@ -67,7 +67,7 @@ void playerMovements() {
     }
     else {
 
-      switch (image) {
+      switch (heli.stance) {
 
         case -17:
           playerStack.push(6, 20);
@@ -100,17 +100,17 @@ void playerMovements() {
 
   if (arduboy.pressed(LEFT_BUTTON)) {
 
-    switch (image) {
+    switch (heli.stance) {
 
       case 1:
         playerStack.push(6, 5, 4);
         playerStack.push(3, 2);
-        incX = DELTA_X_DECREASE;          
+        heli.xInc = DELTA_X_DECREASE;          
         break;
 
       case 10:
         playerStack.push(12, 11);
-        incX = DELTA_X_DECREASE;          
+        heli.xInc = DELTA_X_DECREASE;          
         break;
 
       case 17:
@@ -118,13 +118,13 @@ void playerMovements() {
         playerStack.push(3, 2, 1);
         playerStack.push(13, 14);
         playerStack.push(15, 16);
-        incX = DELTA_X_DECREASE;          
+        heli.xInc = DELTA_X_DECREASE;          
         break;
 
       case -1:
         playerStack.push(-17, -16, -15);
         playerStack.push(-14, -13);
-        incX = DELTA_X_DECREASE;          
+        heli.xInc = DELTA_X_DECREASE;          
         break;
 
       case -6:
@@ -132,17 +132,17 @@ void playerMovements() {
         playerStack.push(-14, -13);
         playerStack.push(-1, -2, -3);
         playerStack.push(-4, -5);
-        incX = DELTA_X_DECREASE;          
+        heli.xInc = DELTA_X_DECREASE;          
         break;
 
       case -12:
         playerStack.push(12, 11);
         playerStack.push(10, -11);
-        incX = DELTA_X_INCREASE;          
+        heli.xInc = DELTA_X_INCREASE;          
         break;
 
       default:
-        incX = DELTA_X_DECREASE;          
+        heli.xInc = DELTA_X_DECREASE;          
         break;
       
     }
@@ -151,17 +151,17 @@ void playerMovements() {
 
   else if (arduboy.pressed(RIGHT_BUTTON)) {
 
-    switch (image) {
+    switch (heli.stance) {
 
       case -1:
         playerStack.push(-6, -5, -4);
         playerStack.push(-3, -2);
-        incX = DELTA_X_INCREASE; 
+        heli.xInc = DELTA_X_INCREASE; 
         break;
 
       case 10:
         playerStack.push(-12, -11);
-        incX = DELTA_X_INCREASE; 
+        heli.xInc = DELTA_X_INCREASE; 
         break;
 
       case -17:
@@ -169,13 +169,13 @@ void playerMovements() {
         playerStack.push(-3, -2, -1);
         playerStack.push(-13, -14);
         playerStack.push(-15, -16);
-        incX = DELTA_X_INCREASE; 
+        heli.xInc = DELTA_X_INCREASE; 
         break;
 
       case 1:
         playerStack.push(17, 16, 15);
         playerStack.push(14, 13);
-        incX = DELTA_X_INCREASE;       
+        heli.xInc = DELTA_X_INCREASE;       
         break;
 
       case 6:
@@ -183,17 +183,17 @@ void playerMovements() {
         playerStack.push(14, 13);
         playerStack.push(1, 2, 3);
         playerStack.push(4, 5);
-        incX = DELTA_X_INCREASE;       
+        heli.xInc = DELTA_X_INCREASE;       
         break;
 
       case 12:
         playerStack.push(-12, -11);
         playerStack.push(10, 11);
-        incX = DELTA_X_DECREASE;       
+        heli.xInc = DELTA_X_DECREASE;       
         break;
 
       default:
-        incX = DELTA_X_INCREASE; 
+        heli.xInc = DELTA_X_INCREASE; 
         break;
 
     }
@@ -201,40 +201,40 @@ void playerMovements() {
   } 
   else {  // Return from current position to upright ..
 
-    switch (image) {
+    switch (heli.stance) {
 
       case 12:
         playerStack.push(10, 11);
-        if (deltaX != 0) incX = DELTA_X_INCREASE;
+        if (heli.xDelta != 0) heli.xInc = DELTA_X_INCREASE;
         break;
 
       case -12:
         playerStack.push(10, -11);
-        if (deltaX != 0) incX = DELTA_X_DECREASE;
+        if (heli.xDelta != 0) heli.xInc = DELTA_X_DECREASE;
         break;
 
       case 6:
         playerStack.push(1, 2, 3);
         playerStack.push(4, 5);
-        if (deltaX != 0) incX = DELTA_X_INCREASE;
+        if (heli.xDelta != 0) heli.xInc = DELTA_X_INCREASE;
         break;
 
       case -6:
         playerStack.push(-1, -2, -3);
         playerStack.push(-4, -5);
-        if (deltaX != 0) incX = DELTA_X_DECREASE;
+        if (heli.xDelta != 0) heli.xInc = DELTA_X_DECREASE;
         break;
       
       case 17:
         playerStack.push(1, 13, 14);
         playerStack.push(15, 16);
-        if (deltaX != 0) incX = DELTA_X_DECREASE;
+        if (heli.xDelta != 0) heli.xInc = DELTA_X_DECREASE;
         break;
 
       case -17:
         playerStack.push(-1, -13, -14);
         playerStack.push(-15, -16);
-        if (deltaX != 0) incX = DELTA_X_INCREASE;
+        if (heli.xDelta != 0) heli.xInc = DELTA_X_INCREASE;
         break;
 
       default: break;

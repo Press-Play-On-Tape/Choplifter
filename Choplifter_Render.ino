@@ -2,7 +2,7 @@
 #include "Enums.h"
 #include "Images.h"
 
-void render(uint8_t sortieNumber) {
+void render(uint8_t sortie) {
 
 
   // Render background ..
@@ -16,34 +16,34 @@ void render(uint8_t sortieNumber) {
 
   // Draw base ..
 
-  if (backgroundX > -158 && backgroundX < 105) {
+  if (heli.xPos > -158 && heli.xPos < 105) {
 
-    arduboy.fillRect(backgroundX + 90, 43, 42, 9, BLACK);
-    arduboy.drawCompressedMirror(backgroundX + 26, 32, base, WHITE, false);
+    arduboy.fillRect(heli.xPos + 90, 43, 42, 9, BLACK);
+    arduboy.drawCompressedMirror(heli.xPos + 26, 32, base, WHITE, false);
 
   }
 
 
   // Draw dormitories ..
 
-  if (sortieNumber == 0) {
+  if (sortie == 0) {
 
     for (uint8_t i = 0; i < NUMBER_OF_DORMITORIES; i++) {
 
       Dormitory *dormitory = &dormitories[i];
 
-      if ((dormitory->xPos > backgroundX - 144) && (dormitory->xPos < backgroundX + 144)) {
+      if ((dormitory->xPos > heli.xPos - 144) && (dormitory->xPos < heli.xPos + 144)) {
 
-        if (dormitory->state == DORMITORY_STATE_INTACT) {
+        if (dormitory->state == DormitoryState::Intact) {
 
-          arduboy.drawCompressedMirror(backgroundX - dormitory->xPos + 64 - 15, 40, dormitory_01_mask, BLACK, false);
-          arduboy.drawCompressedMirror(backgroundX - dormitory->xPos + 64 - 15, 40, dormitory_01, WHITE, false);
+          arduboy.drawCompressedMirror(heli.xPos - dormitory->xPos + 64 - 15, 40, dormitory_01_mask, BLACK, false);
+          arduboy.drawCompressedMirror(heli.xPos - dormitory->xPos + 64 - 15, 40, dormitory_01, WHITE, false);
 
         }
         else {
 
-          arduboy.drawCompressedMirror(backgroundX - dormitory->xPos + 64 - 15, 40, dormitory_02_mask, BLACK, false);
-          arduboy.drawCompressedMirror(backgroundX - dormitory->xPos + 64 - 15, 40, dormitory_02, WHITE, false);
+          arduboy.drawCompressedMirror(heli.xPos - dormitory->xPos + 64 - 15, 40, dormitory_02_mask, BLACK, false);
+          arduboy.drawCompressedMirror(heli.xPos - dormitory->xPos + 64 - 15, 40, dormitory_02, WHITE, false);
           
         }
 
@@ -58,30 +58,30 @@ void render(uint8_t sortieNumber) {
       
       Hostage *hostage = &hostages[i];
 
-      if ((hostage->xPos > backgroundX - 133) && (hostage->xPos < backgroundX + 133)) {
+      if ((hostage->xPos > heli.xPos - 133) && (hostage->xPos < heli.xPos + 133)) {
 
         switch (hostage->stance) {
 
-          case HOSTAGE_RUNNING_LEFT_1 ... HOSTAGE_RUNNING_LEFT_4:
-            arduboy.drawCompressedMirror(backgroundX - hostage->xPos + 64 - 3, 48, hostage_images[hostage->stance - 1], WHITE, false);
+          case HostageStance::Running_Left_1 ... HostageStance::Running_Left_4:
+            arduboy.drawCompressedMirror(heli.xPos - hostage->xPos + 64 - 3, 48, hostage_images[(uint8_t)hostage->stance - 1], WHITE, false);
             break;
 
-          case HOSTAGE_RUNNING_RIGHT_1 ... HOSTAGE_RUNNING_RIGHT_4:
-            arduboy.drawCompressedMirror(backgroundX - hostage->xPos + 64 - 3, 48, hostage_images[hostage->stance - 5], WHITE, true);
+          case HostageStance::Running_Right_1 ... HostageStance::Running_Right_4:
+            arduboy.drawCompressedMirror(heli.xPos - hostage->xPos + 64 - 3, 48, hostage_images[(uint8_t)hostage->stance - 5], WHITE, true);
             break;
 
-          case HOSTAGE_WAVING_11 ... HOSTAGE_WAVING_12:
-            arduboy.drawCompressedMirror(backgroundX - hostage->xPos + 64 - 3, 48, hostage_05, WHITE, false);
+          case HostageStance::Waving_11 ... HostageStance::Waving_12:
+            arduboy.drawCompressedMirror(heli.xPos - hostage->xPos + 64 - 3, 48, hostage_05, WHITE, false);
             break;
 
-          case HOSTAGE_WAVING_21 ... HOSTAGE_WAVING_22:
-            arduboy.drawCompressedMirror(backgroundX - hostage->xPos + 64 - 3, 48, hostage_06, WHITE, false);
+          case HostageStance::Waving_21 ... HostageStance::Waving_22:
+            arduboy.drawCompressedMirror(heli.xPos - hostage->xPos + 64 - 3, 48, hostage_06, WHITE, false);
             break;
 
-          case HOSTAGE_DYING_1:
-          case HOSTAGE_DYING_2:
-            arduboy.drawCompressedMirror(backgroundX - hostage->xPos + 64 - 3, 48, hostage_07, WHITE, false);
-            hostage->stance--;
+          case HostageStance::Dying_1:
+          case HostageStance::Dying_2:
+            arduboy.drawCompressedMirror(heli.xPos - hostage->xPos + 64 - 3, 48, hostage_07, WHITE, false);
+            hostage->stance = (HostageStance)((uint8_t)hostage->stance - 1);
             break;
 
         }
@@ -93,7 +93,26 @@ void render(uint8_t sortieNumber) {
 
     // Draw helicopter ..
 
-    drawHelicopter(45, y, image);
+    if (heli.countDown < 3) {
+      drawHelicopter(45, heli.yPos, heli.stance);
+    }
+    else {
+
+      heli.countDown++;
+      if (heli.countDown == 30) {
+
+        sortieNumber++;
+
+        if (sortieNumber <= 2) {
+          gameState = GameState::Sortie;
+        }
+        else {
+          gameState = GameState::GameOver;
+        }
+
+      }
+
+    }
 
 
     // Draw tank ..
@@ -102,39 +121,39 @@ void render(uint8_t sortieNumber) {
 
       Tank *tank = &tanks[i];
   
-      if (tank->state > TANK_STATE_DEAD_1 && (tank->xPos > backgroundX - 144) && (tank->xPos < backgroundX + 144)) {
+      if (tank->state > TankState::Dead1 && (tank->xPos > heli.xPos - 144) && (tank->xPos < heli.xPos + 144)) {
 
-        arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, tank_00_mask, BLACK, false);
-        arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, (tank->track ? tank_00 : tank_01), WHITE, false);
+        arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, tank_00_mask, BLACK, false);
+        arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, (tank->track ? tank_00 : tank_01), WHITE, false);
 
         switch (tank->turrentDirection) {
 
-          case TANK_TURRENT_DIR_LEFT_LOW:
-            arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, tank_turrent_00, WHITE, true);
+          case TurrentDirection::Left_Low:
+            arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, tank_turrent_00, WHITE, true);
             break;
 
-          case TANK_TURRENT_DIR_LEFT_MID:
-            arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, tank_turrent_01, WHITE, true);
+          case TurrentDirection::Left_Mid:
+            arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, tank_turrent_01, WHITE, true);
             break;
 
-          case TANK_TURRENT_DIR_UPRIGHT:
-            arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, tank_turrent_02, WHITE, false);
+          case TurrentDirection::Upright:
+            arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, tank_turrent_02, WHITE, false);
             break;
 
-          case TANK_TURRENT_DIR_RIGHT_MID:
-            arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, tank_turrent_01, WHITE, false);
+          case TurrentDirection::Right_Mid:
+            arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, tank_turrent_01, WHITE, false);
             break;
 
-          case TANK_TURRENT_DIR_RIGHT_LOW:
-            arduboy.drawCompressedMirror(backgroundX - tank->xPos + 64 - 15, 47, tank_turrent_00, WHITE, false);
+          case TurrentDirection::Right_Low:
+            arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, tank_turrent_00, WHITE, false);
             break;
           
 
         }
 
-        if (tank->state == TANK_STATE_MOVE_LEFT || tank->state == TANK_STATE_MOVE_RIGHT) tank->track = !tank->track;
+        if (tank->state == TankState::Move_Left || tank->state == TankState::Move_Right) tank->track = !tank->track;
 
-        if (tank->state <= TANK_STATE_DEAD_3) {tank->state--; }
+        if (tank->state <= TankState::Dead3) { tank->state = (TankState)((uint8_t)tank->state - 1); }
 
       }
 
@@ -150,9 +169,9 @@ void render(uint8_t sortieNumber) {
 
       if (bullet->xPos != BULLET_INACTIVE_X_VALUE) {
   
-        if ((bullet->xPos > backgroundX - 144) && (bullet->xPos < backgroundX + 144)) {
+        if ((bullet->xPos > heli.xPos - 144) && (bullet->xPos < heli.xPos + 144)) {
 
-          arduboy.fillRect(backgroundX - bullet->xPos + 64 - 1, bullet->yPos, 2, 2, WHITE);
+          arduboy.fillRect(heli.xPos - bullet->xPos + 64 - 1, bullet->yPos, 2, 2, WHITE);
 
         }
     
@@ -170,9 +189,9 @@ void render(uint8_t sortieNumber) {
 
       if (bullet->xPos != BULLET_INACTIVE_X_VALUE) {
   
-        if ((bullet->xPos > backgroundX - 144) && (bullet->xPos < backgroundX + 144)) {
+        if ((bullet->xPos > heli.xPos - 144) && (bullet->xPos < heli.xPos + 144)) {
 
-          arduboy.fillRect(backgroundX - bullet->xPos + 64 - 1, bullet->yPos, 2, 2, WHITE);
+          arduboy.fillRect(heli.xPos - bullet->xPos + 64 - 1, bullet->yPos, 2, 2, WHITE);
 
         }
     
@@ -188,37 +207,6 @@ void render(uint8_t sortieNumber) {
 
       drawExplosion(&playerBulletExplosion);
 
-        // switch (playerBulletExplosion.explosionType) {
-
-        //   case EXPLOSION_SML:
-        //   case EXPLOSION_MED:
-
-        //     if ((playerBulletExplosion.xPos > backgroundX - 144) && (playerBulletExplosion.xPos < backgroundX + 144)) {
-
-        //       arduboy.drawCompressedMirror(backgroundX - playerBulletExplosion.xPos + 64 - 4, playerBulletExplosion.yPos, explosions[playerBulletExplosion.explosionType - 1], WHITE, false);
-        //       playerBulletExplosion.explosionType--;
-        //       if (playerBulletExplosion.explosionType == 0) playerBulletExplosion.xPos = BULLET_INACTIVE_X_VALUE;
-
-        //     }
-
-        //     break;
-
-        //   case EXPLOSION_LRG_1 ... EXPLOSION_LRG_4:
-
-        //     if ((playerBulletExplosion.xPos > backgroundX - 144) && (playerBulletExplosion.xPos < backgroundX + 144)) {
-
-        //       arduboy.drawCompressedMirror(backgroundX - playerBulletExplosion.xPos + 64 - 12, playerBulletExplosion.yPos, explosions_masks[playerBulletExplosion.explosionType - 1], BLACK, false);
-        //       arduboy.drawCompressedMirror(backgroundX - playerBulletExplosion.xPos + 64 - 12, playerBulletExplosion.yPos, explosions[playerBulletExplosion.explosionType - 1], WHITE, false);
-
-        //       playerBulletExplosion.explosionType++;
-        //       if (playerBulletExplosion.explosionType == EXPLOSION_LRG_4 + 1) playerBulletExplosion.xPos = BULLET_INACTIVE_X_VALUE;
-
-        //     }
-
-        //     break;
-
-        // }
-
     }
 
 
@@ -229,6 +217,7 @@ void render(uint8_t sortieNumber) {
     if (tankBulletExplosion.xPos != BULLET_INACTIVE_X_VALUE) {
 
       drawExplosion(&tankBulletExplosion);
+      if (heli.countDown > 0) heli.countDown++;
 
     }
 
@@ -236,41 +225,41 @@ void render(uint8_t sortieNumber) {
 
     // Draw fences ..
 
-    switch (backgroundX) {
+    switch (heli.xPos) {
 
       case 120 ... 159:
-        arduboy.drawCompressedMirror(-24 + (backgroundX - 150), 1, fence_00_mask, BLACK, true);
-        arduboy.drawCompressedMirror(-24 + (backgroundX - 150), 1, fence_00, WHITE, true);
+        arduboy.drawCompressedMirror(-24 + (heli.xPos - 150), 2, fence_00_mask, BLACK, true);
+        arduboy.drawCompressedMirror(-24 + (heli.xPos - 150), 2, fence_00, WHITE, true);
         break;
 
       case 160 ... 169:
-        arduboy.drawCompressedMirror(-16 + (backgroundX - 160), 1, fence_01_mask, BLACK, true);
-        arduboy.drawCompressedMirror(-16 + (backgroundX - 160), 1, fence_01, WHITE, true);
+        arduboy.drawCompressedMirror(-16 + (heli.xPos - 160), 2, fence_01_mask, BLACK, true);
+        arduboy.drawCompressedMirror(-16 + (heli.xPos - 160), 2, fence_01, WHITE, true);
         break;
 
       case 170 ... 179:
-        arduboy.drawCompressedMirror(-8 + (backgroundX - 170), 1, fence_02_mask, BLACK, true);
-        arduboy.drawCompressedMirror(-8 + (backgroundX - 170), 1, fence_02, WHITE, true);
+        arduboy.drawCompressedMirror(-8 + (heli.xPos - 170), 2, fence_02_mask, BLACK, true);
+        arduboy.drawCompressedMirror(-8 + (heli.xPos - 170), 2, fence_02, WHITE, true);
         break;
 
       case 180 ... 189:
-        arduboy.drawCompressedMirror(60 + (backgroundX - 180), 1, fence_03_mask, BLACK, false);
-        arduboy.drawCompressedMirror(60 + (backgroundX - 180), 1, fence_03, WHITE, false);
+        arduboy.drawCompressedMirror(60 + (heli.xPos - 180), 2, fence_03_mask, BLACK, false);
+        arduboy.drawCompressedMirror(60 + (heli.xPos - 180), 2, fence_03, WHITE, false);
         break;
 
       case 190 ... 199:
-        arduboy.drawCompressedMirror(68 + (backgroundX - 190), 1, fence_02_mask, BLACK, false);
-        arduboy.drawCompressedMirror(68 + (backgroundX - 190), 1, fence_02, WHITE, false);
+        arduboy.drawCompressedMirror(68 + (heli.xPos - 190), 2, fence_02_mask, BLACK, false);
+        arduboy.drawCompressedMirror(68 + (heli.xPos - 190), 2, fence_02, WHITE, false);
         break;
 
       case 200 ... 209:
-        arduboy.drawCompressedMirror(76 + (backgroundX - 200), 1, fence_01_mask, BLACK, false);
-        arduboy.drawCompressedMirror(76 + (backgroundX - 200), 1, fence_01, WHITE, false);
+        arduboy.drawCompressedMirror(76 + (heli.xPos - 200), 2, fence_01_mask, BLACK, false);
+        arduboy.drawCompressedMirror(76 + (heli.xPos - 200), 2, fence_01, WHITE, false);
         break;
 
       case 210 ... 249:
-        arduboy.drawCompressedMirror(84 + (backgroundX - 210), 1, fence_00_mask, BLACK, false);
-        arduboy.drawCompressedMirror(84 + (backgroundX - 210), 1, fence_00, WHITE, false);
+        arduboy.drawCompressedMirror(84 + (heli.xPos - 210), 2, fence_00_mask, BLACK, false);
+        arduboy.drawCompressedMirror(84 + (heli.xPos - 210), 2, fence_00, WHITE, false);
         break;
       
     }
@@ -278,33 +267,23 @@ void render(uint8_t sortieNumber) {
 
     // Draw scoreboard ..
 
-    arduboy.drawCompressedMirror(-1, 0, digit_Cross, WHITE, false);
-    arduboy.drawCompressedMirror(4, 0, digits[dead / 10], WHITE, false);
-    arduboy.drawCompressedMirror(9, 0, digits[dead % 10], WHITE, false);
-    
-    arduboy.drawCompressedMirror(14, 0, digit_Diamond, WHITE, false);
-    arduboy.drawCompressedMirror(21, 0, digits[inHeli / 10], WHITE, false);
-    arduboy.drawCompressedMirror(26, 0, digits[inHeli % 10], WHITE, false);
-    
-    arduboy.drawCompressedMirror(31, 0, digit_Heart, WHITE, false);
-    arduboy.drawCompressedMirror(38, 0, digits[safe / 10], WHITE, false);
-    arduboy.drawCompressedMirror(43, 0, digits[safe % 10], WHITE, false);
+    drawScoreBoard();
 
   }
   else {
-        
-    switch (sortieNumber) {
+  
+    switch (sortie) {
 
       case 1:
-        arduboy.drawCompressedMirror(38, 25, sortie_01, WHITE, false);
+        arduboy.drawCompressedMirror(38, 22, sortie_01, WHITE, false);
         break;
 
       case 2:
-        arduboy.drawCompressedMirror(38, 25, sortie_02, WHITE, false);
+        arduboy.drawCompressedMirror(38, 22, sortie_02, WHITE, false);
         break;
 
       case 3:
-        arduboy.drawCompressedMirror(38, 25, sortie_03, WHITE, false);
+        arduboy.drawCompressedMirror(38, 22, sortie_03, WHITE, false);
         break;
     
     }
@@ -317,31 +296,31 @@ void drawExplosion(BulletExplosion *bulletExplosion) {
 
     switch (bulletExplosion->explosionType) {
 
-      case EXPLOSION_SML:
-      case EXPLOSION_MED:
+      case ExplosionType::Small:
+      case ExplosionType::Medium:
 
-      case EXPLOSION_BOTH_SML:
-      case EXPLOSION_BOTH_MED:
+      case ExplosionType::Both_Small:
+      case ExplosionType::Both_Medium:
 
-        if ((bulletExplosion->xPos > backgroundX - 144) && (bulletExplosion->xPos < backgroundX + 144)) {
+        if ((bulletExplosion->xPos > heli.xPos - 144) && (bulletExplosion->xPos < heli.xPos + 144)) {
 
-          arduboy.drawCompressedMirror(backgroundX - bulletExplosion->xPos + 64 - 4, bulletExplosion->yPos, explosions[bulletExplosion->explosionType], WHITE, false);
-          bulletExplosion->explosionType--;
-          if (bulletExplosion->explosionType == EXPLOSION_NONE || bulletExplosion->explosionType == EXPLOSION_BOTH_NONE) bulletExplosion->xPos = BULLET_INACTIVE_X_VALUE;
+          arduboy.drawCompressedMirror(heli.xPos - bulletExplosion->xPos + 64 - 4, bulletExplosion->yPos, explosions[(uint8_t)bulletExplosion->explosionType], WHITE, false);
+          bulletExplosion->explosionType = (ExplosionType)((uint8_t)bulletExplosion->explosionType - 1);
+          if (bulletExplosion->explosionType == ExplosionType::None || bulletExplosion->explosionType == ExplosionType::Both_None) bulletExplosion->xPos = BULLET_INACTIVE_X_VALUE;
 
         }
 
         break;
 
-      case EXPLOSION_LRG_1 ... EXPLOSION_LRG_4:
+      case ExplosionType::Large_1 ... ExplosionType::Large_4:
 
-        if ((bulletExplosion->xPos > backgroundX - 144) && (bulletExplosion->xPos < backgroundX + 144)) {
+        if ((bulletExplosion->xPos > heli.xPos - 144) && (bulletExplosion->xPos < heli.xPos + 144)) {
 
-          arduboy.drawCompressedMirror(backgroundX - bulletExplosion->xPos + 64 - 12, bulletExplosion->yPos, explosions_masks[bulletExplosion->explosionType], BLACK, false);
-          arduboy.drawCompressedMirror(backgroundX - bulletExplosion->xPos + 64 - 12, bulletExplosion->yPos, explosions[bulletExplosion->explosionType], WHITE, false);
+          arduboy.drawCompressedMirror(heli.xPos - bulletExplosion->xPos + 64 - 12, bulletExplosion->yPos, explosions_masks[(uint8_t)bulletExplosion->explosionType], BLACK, false);
+          arduboy.drawCompressedMirror(heli.xPos - bulletExplosion->xPos + 64 - 12, bulletExplosion->yPos, explosions[(uint8_t)bulletExplosion->explosionType], WHITE, false);
 
-          bulletExplosion->explosionType++;
-          if (bulletExplosion->explosionType == EXPLOSION_LRG_END) bulletExplosion->xPos = BULLET_INACTIVE_X_VALUE;
+          bulletExplosion->explosionType = (ExplosionType)((uint8_t)bulletExplosion->explosionType + 1);
+          if (bulletExplosion->explosionType == ExplosionType::Large_End) bulletExplosion->xPos = BULLET_INACTIVE_X_VALUE;
 
         }
 
@@ -349,4 +328,21 @@ void drawExplosion(BulletExplosion *bulletExplosion) {
 
     }
     
+}
+
+
+void drawScoreBoard() {
+
+    arduboy.drawCompressedMirror(-1, 0, digit_Cross, WHITE, false);
+    arduboy.drawCompressedMirror(4, 0, digits[dead / 10], WHITE, false);
+    arduboy.drawCompressedMirror(9, 0, digits[dead % 10], WHITE, false);
+    
+    arduboy.drawCompressedMirror(14, 0, digit_Diamond, WHITE, false);
+    arduboy.drawCompressedMirror(21, 0, digits[inHelicopter / 10], WHITE, false);
+    arduboy.drawCompressedMirror(26, 0, digits[inHelicopter % 10], WHITE, false);
+    
+    arduboy.drawCompressedMirror(31, 0, digit_Heart, WHITE, false);
+    arduboy.drawCompressedMirror(38, 0, digits[safe / 10], WHITE, false);
+    arduboy.drawCompressedMirror(43, 0, digits[safe % 10], WHITE, false);
+
 }

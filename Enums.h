@@ -12,6 +12,64 @@ enum class GameState : uint8_t {
   GameOver
 };
 
+enum class TankState : uint8_t {
+  Dead1,
+  Dead2,
+  Dead3,
+  Move_Left,
+  Move_Right,
+  Stationary
+};
+
+enum class TurrentDirection : uint8_t {
+  Left_Low,
+  Left_Mid,
+  Upright,
+  Right_Mid,
+  Right_Low
+};
+
+enum class HostageStance : uint8_t {
+  In_Dorm,
+  Running_Left_1,
+  Running_Left_2,
+  Running_Left_3,
+  Running_Left_4,
+  Running_Right_1,
+  Running_Right_2,
+  Running_Right_3,
+  Running_Right_4,
+  Waving_11,
+  Waving_12,
+  Waving_21,
+  Waving_22,
+  Leaving_Dorm,
+  Dead,
+  Dying_1,
+  Dying_2,
+  Safe,
+  In_Helicopter
+};
+
+enum class ExplosionType : uint8_t {
+  None,
+  Small,
+  Medium,
+  Both_None,
+  Both_Small,
+  Both_Medium,
+  Large_1,
+  Large_2,
+  Large_3,
+  Large_4,
+  Large_End
+};
+
+enum class DormitoryState : uint8_t {
+  Intact,
+  Open
+};
+
 struct Bullet {
   int16_t xPos;
   uint8_t yPos;
@@ -23,33 +81,32 @@ struct Bullet {
 struct BulletExplosion {
   int16_t xPos;
   uint16_t yPos;
-  uint8_t explosionType;
+  ExplosionType explosionType;
 };
 
 struct Hostage {
-  uint8_t stance;   
+  HostageStance stance;   
   uint8_t countDown;
   int16_t xPos;
 };
 
 struct Dormitory {
-  uint8_t state;    // 0 .. intact.  1 shot open.
+  DormitoryState state;  
   int16_t xPos;
   uint8_t numberOfHits;
 };
 
 struct Tank {
-  uint8_t state;    // 0 .. dead, 1 Move Left, 2 Move Right
-  uint8_t turrentDirection;
+  TankState state; 
+  TurrentDirection turrentDirection;
   uint8_t countDown;
   int16_t xPos;
   bool track;
-
   uint8_t numberOfHits;
 };
+ 
 
-
-#define NUMBER_OF_PLAYER_BULLETS            8
+#define NUMBER_OF_PLAYER_BULLETS            6
 #define NUMBER_OF_HOSTAGES                  64
 #define NUMBER_OF_DORMITORIES               4
 #define NUMBER_OF_TANKS                     6
@@ -57,23 +114,10 @@ struct Tank {
 #define BULLET_INACTIVE_X_VALUE             5000
 #define BULLET_SHOOT_HORIZONTAL             255
 
-#define TANK_STATE_DEAD_1                   0
-#define TANK_STATE_DEAD_2                   1
-#define TANK_STATE_DEAD_3                   2
-#define TANK_STATE_MOVE_LEFT                3
-#define TANK_STATE_MOVE_RIGHT               4
-#define TANK_STATE_STATIONARY               5
-
 #define NUMBER_OF_TANK_BULLETS              2
 #define TANK_SPACING                        400
 #define TANK_BULLET_MIN_Y_VALUE             25
 #define TANK_BULLET_NUMBER_OF_HITS          4
-
-#define TANK_TURRENT_DIR_LEFT_LOW           0
-#define TANK_TURRENT_DIR_LEFT_MID           1
-#define TANK_TURRENT_DIR_UPRIGHT            2
-#define TANK_TURRENT_DIR_RIGHT_MID          3
-#define TANK_TURRENT_DIR_RIGHT_LOW          4
 #define TANK_FAR_RIGHT_POS                  225
 
 #define HELICOPTER_MAXIMUM_HEIGHT           (int8_t)-3
@@ -87,42 +131,9 @@ struct Tank {
 #define DELTA_X_INCREASE                    1
 #define DELTA_X_DECREASE                    2
 
-#define DORMITORY_STATE_INTACT              0
-#define DORMITORY_STATE_OPEN                1
 #define DORMITORY_HITS_REQUIRED             5
 #define DORMITORY_SPACING                   400
-#define DORMITORY_SPACING_FUDGE             DORMITORY_SPACING / 4
 #define DORMITORY_HOSTAGE_CAPACITY          16
 
-#define HOSTAGE_IN_DORM                     0
-#define HOSTAGE_RUNNING_LEFT_1              1
-#define HOSTAGE_RUNNING_LEFT_2              2
-#define HOSTAGE_RUNNING_LEFT_3              3
-#define HOSTAGE_RUNNING_LEFT_4              4
-#define HOSTAGE_RUNNING_RIGHT_1             5
-#define HOSTAGE_RUNNING_RIGHT_2             6
-#define HOSTAGE_RUNNING_RIGHT_3             7
-#define HOSTAGE_RUNNING_RIGHT_4             8
-#define HOSTAGE_WAVING_11                   9
-#define HOSTAGE_WAVING_12                   10
-#define HOSTAGE_WAVING_21                   11
-#define HOSTAGE_WAVING_22                   12
-#define HOSTAGE_LEAVING_DORM                13
-#define HOSTAGE_DEAD                        14
-#define HOSTAGE_DYING_1                     15
-#define HOSTAGE_DYING_2                     16
-#define HOSTAGE_SAFE                        17
-#define HOSTAGE_IN_HELICOPTER               18
 #define HOSTAGE_FAR_RIGHT_POS               210
 
-#define EXPLOSION_NONE                      0
-#define EXPLOSION_SML                       1
-#define EXPLOSION_MED                       2
-#define EXPLOSION_BOTH_NONE                 3
-#define EXPLOSION_BOTH_SML                  4
-#define EXPLOSION_BOTH_MED                  5
-#define EXPLOSION_LRG_1                     6
-#define EXPLOSION_LRG_2                     7
-#define EXPLOSION_LRG_3                     8
-#define EXPLOSION_LRG_4                     9
-#define EXPLOSION_LRG_END                   10

@@ -1,3 +1,7 @@
+#include "src/utils/Arduboy2Ext.h"
+#include "Enums.h"
+#include "Images.h"
+
 /* ----------------------------------------------------------------------------
  *  A better absolute!
  */
