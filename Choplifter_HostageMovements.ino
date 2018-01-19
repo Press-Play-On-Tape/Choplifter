@@ -3,6 +3,10 @@
 #include "Images.h"
 #include "src/utils/Stack.h"
 
+
+/* ----------------------------------------------------------------------------
+ *  Handle hostage movements ..
+ */
 void hostageMovements() {
 
 

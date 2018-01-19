@@ -3,6 +3,10 @@
 #include "Images.h"
 #include "src/utils/Stack.h"
 
+
+/* ----------------------------------------------------------------------------
+ *  Hanlde player movements ..
+ */
 void playerMovements() {
 
 

@@ -2,6 +2,13 @@
 #include "Enums.h"
 #include "Images.h"
 
+
+/* ----------------------------------------------------------------------------
+ *  Render the screen ..
+ * 
+ *  If a sortie number greater than zero is supplied, the sortie number is 
+ *  rendered otherwise the notmal screen os drawn.
+ */
 void render(uint8_t sortie) {
 
 
@@ -331,6 +338,9 @@ void drawExplosion(BulletExplosion *bulletExplosion) {
 }
 
 
+/* ----------------------------------------------------------------------------
+ *  Draw the scoreboard in the top left hand corner ..
+ */
 void drawScoreBoard() {
 
     arduboy.drawCompressedMirror(-1, 0, digit_Cross, WHITE, false);

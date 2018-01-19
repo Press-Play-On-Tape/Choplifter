@@ -70,6 +70,18 @@ enum class DormitoryState : uint8_t {
   Open
 };
 
+struct Helicopter {
+  int8_t stance;
+  int16_t xPos;
+  int8_t yPos;
+  int8_t xDelta;
+  int8_t yDelta;
+  uint8_t prevTurn; 
+  uint8_t hits;
+  uint8_t countDown;  // used when dying;
+  uint8_t xInc;
+};
+
 struct Bullet {
   int16_t xPos;
   uint8_t yPos;
@@ -123,6 +135,7 @@ struct Tank {
 #define HELICOPTER_MAXIMUM_HEIGHT           (int8_t)-3
 #define HELICOPTER_MINIMUM_HEIGHT           (int8_t)40
 #define HELICOPTER_HOSTAGE_CAPACITY         16
+#define HELICOPTER_BULLET_NUMBER_OF_HITS    3
 
 #define PREV_TURN_FROM_LEFT                 0
 #define PREV_TURN_FROM_RIGHT                1
