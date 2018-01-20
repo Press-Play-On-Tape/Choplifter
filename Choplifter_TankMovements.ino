@@ -112,6 +112,8 @@ void tankMovements() {
 
             if (bullet->xPos == BULLET_INACTIVE_X_VALUE) {
 
+            sound.tones(tank_firing); 
+
               bullet->yPos = 40;
               bullet->yDelta = -8;
               bullet->startYPos = bullet->yPos;

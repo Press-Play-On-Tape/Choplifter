@@ -101,7 +101,9 @@ void render(uint8_t sortie) {
     // Draw helicopter ..
 
     if (heli.countDown < 3) {
+
       drawHelicopter(45, heli.yPos, heli.stance);
+
     }
     else {
 
@@ -110,7 +112,7 @@ void render(uint8_t sortie) {
 
         sortieNumber++;
 
-        if (sortieNumber <= 2) {
+        if (sortieNumber <= NUMBER_OF_SORTIES) {
           gameState = GameState::Sortie;
         }
         else {
@@ -274,7 +276,7 @@ void render(uint8_t sortie) {
 
     // Draw scoreboard ..
 
-    drawScoreBoard();
+    drawScoreBoard(true);
 
   }
   else {
@@ -341,7 +343,9 @@ void drawExplosion(BulletExplosion *bulletExplosion) {
 /* ----------------------------------------------------------------------------
  *  Draw the scoreboard in the top left hand corner ..
  */
-void drawScoreBoard() {
+void drawScoreBoard(bool all) {
+
+  if (all) {
 
     arduboy.drawCompressedMirror(-1, 0, digit_Cross, WHITE, false);
     arduboy.drawCompressedMirror(4, 0, digits[dead / 10], WHITE, false);
@@ -354,5 +358,14 @@ void drawScoreBoard() {
     arduboy.drawCompressedMirror(31, 0, digit_Heart, WHITE, false);
     arduboy.drawCompressedMirror(38, 0, digits[safe / 10], WHITE, false);
     arduboy.drawCompressedMirror(43, 0, digits[safe % 10], WHITE, false);
+
+  }
+  else {
+
+    arduboy.drawCompressedMirror(0, 0, digit_Heart, WHITE, false);
+    arduboy.drawCompressedMirror(7, 0, digits[safe / 10], WHITE, false);
+    arduboy.drawCompressedMirror(12, 0, digits[safe % 10], WHITE, false);
+
+  }
 
 }

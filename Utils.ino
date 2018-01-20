@@ -119,31 +119,28 @@ void resetGame() {
 
   resetSortie();
 
+  dead = 0;
+  inHelicopter = 0;
+  safe = 0;
+
   sortieNumber = 1;
 
   dormitories[0] = { DormitoryState::Open,    DORMITORY_SPACING };
   dormitories[1] = { DormitoryState::Intact,  (DORMITORY_SPACING * 2) };
   dormitories[2] = { DormitoryState::Intact,  (DORMITORY_SPACING * 3) };
   dormitories[3] = { DormitoryState::Intact,  (DORMITORY_SPACING * 4) };
-/* SJH
+
   tanks[0] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (1 * TANK_SPACING) + random(100, 600), true};
   tanks[1] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (2 * TANK_SPACING) + random(100, 600), true};
   tanks[2] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (3 * TANK_SPACING) + random(100, 600), true};
   tanks[3] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (4 * TANK_SPACING) + random(100, 600), true};
   tanks[4] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (5 * TANK_SPACING) + random(100, 600), true};
   tanks[5] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (6 * TANK_SPACING) + random(100, 600), true};
- */  
-
-  tanks[0] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (1 * TANK_SPACING) + random(100, 600), true};
-  tanks[1] = {TankState::Dead1, TurrentDirection::Left_Low, 5, (2 * TANK_SPACING) + random(100, 600), true};
-  tanks[2] = {TankState::Dead1, TurrentDirection::Left_Low, 5, (3 * TANK_SPACING) + random(100, 600), true};
-  tanks[3] = {TankState::Dead1, TurrentDirection::Left_Low, 5, (4 * TANK_SPACING) + random(100, 600), true};
-  tanks[4] = {TankState::Dead1, TurrentDirection::Left_Low, 5, (5 * TANK_SPACING) + random(100, 600), true};
-  tanks[5] = {TankState::Dead1, TurrentDirection::Left_Low, 5, (6 * TANK_SPACING) + random(100, 600), true};
+ 
 
   for (int i = 0; i < NUMBER_OF_HOSTAGES; i++) {
 
-      hostages[i] = { (i < 1 /*SJH 6*/ ? HostageStance::Leaving_Dorm : HostageStance::In_Dorm), ((i % 16) * 15) + 10, dormitories[i / 16].xPos };
+      hostages[i] = { (i < 16 ? HostageStance::Leaving_Dorm : HostageStance::In_Dorm), ((i % 16) * 15) + 10, dormitories[i / 16].xPos };
 
   }
 
@@ -224,9 +221,14 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
 
         if (heli.hits == HELICOPTER_BULLET_NUMBER_OF_HITS) {
 
+          sound.tones(exploding);
+
           explosion->explosionType = ExplosionType::Large_1;
           heli.countDown++;
 
+
+
+          // Kill any hostages that were in the helicopter ..
 
           dead = dead + inHelicopter;
           inHelicopter = 0;
@@ -269,32 +271,34 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
 
             if (dormitory->numberOfHits == DORMITORY_HITS_REQUIRED) {
 
-            dormitory->state = DormitoryState::Open;
-            explosion->xPos = bullet->xPos;
-            explosion->yPos = 36 + (diff / 3);
-            explosion->explosionType = ExplosionType::Large_1;
+              sound.tones(exploding);
+
+              dormitory->state = DormitoryState::Open;
+              explosion->xPos = bullet->xPos;
+              explosion->yPos = 36 + (diff / 3);
+              explosion->explosionType = ExplosionType::Large_1;
 
 
-            // Release the hostages ..
+              // Release the hostages ..
 
-            uint8_t count = 0;
+              uint8_t count = 0;
 
-            for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
+              for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
 
-              Hostage *hostage = &hostages[i];
+                Hostage *hostage = &hostages[i];
 
-              if (hostage->stance == HostageStance::In_Dorm) {
-                
-                hostage->stance = HostageStance::Leaving_Dorm;
-                hostage->xPos = dormitory->xPos + 16;
-                hostage->countDown = (count * 15) + 10;
-                count++;
+                if (hostage->stance == HostageStance::In_Dorm) {
+                  
+                  hostage->stance = HostageStance::Leaving_Dorm;
+                  hostage->xPos = dormitory->xPos + 16;
+                  hostage->countDown = (count * 15) + 10;
+                  count++;
 
-                if (count == DORMITORY_HOSTAGE_CAPACITY) { break; }
+                  if (count == DORMITORY_HOSTAGE_CAPACITY) { break; }
+
+                }
 
               }
-
-            }
 
             } 
 
@@ -319,6 +323,8 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
               hostage->stance <= HostageStance::Waving_22 && 
               diff < 3) {
 
+            sound.tones(kill_hostage);
+
             explosion->xPos = bullet->xPos;
             explosion->yPos = 52;
             explosion->explosionType = ExplosionType::Medium;
@@ -340,8 +346,7 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
             Tank *tank = &tanks[i];
             uint16_t diff = tank->xPos - bullet->xPos;
 
-//SJH                if (bullet->startYPos > TANK_BULLET_MIN_Y_VALUE && diff < 16) {  // Bullets that hit tank must be fired from down low ..
-            if (diff < 16) {  
+            if (bullet->startYPos > TANK_BULLET_MIN_Y_VALUE && diff < 16) {  // Bullets that hit tank must be fired from down low ..
 
               explosion->xPos = bullet->xPos;
               explosion->yPos = (diff < 8 ? 46 : 51);
@@ -351,6 +356,8 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
               tank->numberOfHits++;
 
               if (tank->numberOfHits == TANK_BULLET_NUMBER_OF_HITS) {
+
+                sound.tones(exploding);
 
                 explosion->yPos = 50;
                 explosion->explosionType = ExplosionType::Large_1;
@@ -368,6 +375,9 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
       break;
 
     case 61 ... 74:               //  Hitting the ground ..
+
+      sound.tones(miss); 
+
       explosion->xPos = bullet->xPos;
       explosion->yPos = 60;
       explosion->explosionType = ExplosionType::Small;

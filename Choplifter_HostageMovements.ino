@@ -26,19 +26,22 @@ void hostageMovements() {
         heli.xPos > 50 && heli.yPos >= 40 && absT(hostage->xPos - heli.xPos) < 5
         ) {    
 
+      sound.tones(collect_hostage);
+      
       inHelicopter++;
       hostage->stance = HostageStance::In_Helicopter;
       hostage->countDown = (14 * inHelicopter);
 
     }
 
+
     // Deposit hostages at base ..
 
     else if (hostage->stance == HostageStance::In_Helicopter && 
              heli.yPos >= 40 &&                                                                                               
-             ((heli.stance == 1 && heli.xPos < 24 && heli.xPos > -4) || 
-              (heli.stance == -1 && heli.xPos < 22 && heli.xPos > 0) || 
-              (heli.stance == 10 && heli.xPos < 22 && heli.xPos > -12))) {                
+             ((heli.stance == 1 && heli.xPos < 26 && heli.xPos > -6) || 
+              (heli.stance == -1 && heli.xPos < 24 && heli.xPos > 2) || 
+              (heli.stance == 10 && heli.xPos < 24 && heli.xPos > -14))) {                
 
       hostage->countDown--;
 
@@ -58,6 +61,7 @@ void hostageMovements() {
     else if (hostage->stance != HostageStance::Safe && hostage->xPos < -40) {                                                                                   
 
         hostage->stance = HostageStance::Safe;
+        sound.tones(safety);
         safe++;
 
     }

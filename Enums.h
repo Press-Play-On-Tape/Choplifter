@@ -122,6 +122,7 @@ struct Tank {
 #define NUMBER_OF_HOSTAGES                  64
 #define NUMBER_OF_DORMITORIES               4
 #define NUMBER_OF_TANKS                     6
+#define NUMBER_OF_SORTIES                   3
 
 #define BULLET_INACTIVE_X_VALUE             5000
 #define BULLET_SHOOT_HORIZONTAL             255

@@ -1,9 +1,12 @@
 #include "src/utils/Arduboy2Ext.h"
+#include <ArduboyTones.h>
 #include "Enums.h"
 #include "Images.h"
 #include "src/utils/Stack.h"
+#include "src/sounds/Sounds.h"
 
 Arduboy2Ext arduboy;
+ArduboyTones sound(arduboy.audio.on);
 
 Helicopter heli;
 
@@ -67,6 +70,7 @@ void loop() {
     case GameState::Sortie:
       resetSortie();
       render(sortieNumber);
+      
       if (arduboy.justPressed(A_BUTTON)) { gameState = GameState::PlayGame; }
       break;
 
@@ -92,7 +96,7 @@ void loop() {
 void introduction() {
 
   arduboy.drawCompressedMirror(16, 24, choplifter, WHITE, false);
-  if (arduboy.justPressed(A_BUTTON)) { gameState = GameState::Sortie; }
+  if (arduboy.justPressed(A_BUTTON)) { sound.tones(introduction_sound); gameState = GameState::Sortie; }
 
 }
 
@@ -103,7 +107,7 @@ void introduction() {
 void gameOver() {
 
   arduboy.drawCompressedMirror(45, 21, the_end, WHITE, false);
-  drawScoreBoard();
+  drawScoreBoard(false);
   if (arduboy.justPressed(A_BUTTON)) { gameState = GameState::Initialise; }
 
 }
@@ -132,6 +136,8 @@ void play() {
 
           if (bullet->xPos == BULLET_INACTIVE_X_VALUE) {
 
+            sound.tones(player_firing);
+
             bullet->xPos = heli.xPos + (heli.stance < 0 ? -13 : 13);
             bullet->yPos = heli.yPos + 15;
             bullet->yDelta = BULLET_SHOOT_HORIZONTAL;
@@ -152,6 +158,8 @@ void play() {
           Bullet *bullet = &playerBullets[i];
 
           if (bullet->xPos == BULLET_INACTIVE_X_VALUE) {
+
+            sound.tones(player_firing);
 
             bullet->xPos = heli.xPos;
             bullet->yPos = heli.yPos + 19;
@@ -191,7 +199,94 @@ void play() {
 
 
   // Change the helicopter's position ..
- 
+
+  switch (heli.yDelta) {
+
+    case -8 ... -1:                         // Going up!
+
+      if (heli.yPos < (HELICOPTER_MAXIMUM_HEIGHT + 4) && heli.yDelta == -4) { heli.yDelta = -2; }
+      if (heli.yPos < (HELICOPTER_MAXIMUM_HEIGHT + 2) && heli.yDelta == -2) { heli.yDelta = -1; }
+      if (heli.yPos < (HELICOPTER_MAXIMUM_HEIGHT + 1) && heli.yDelta == -1) { heli.yDelta = 0; }
+
+      heli.yPos = heli.yPos + heli.yDelta;
+      break;
+
+    case 0:
+      break;
+
+    case 1 ... 8:                           // We are falling ..
+
+      if (heli.yPos < (HELICOPTER_MINIMUM_HEIGHT - heli.yDelta)) {
+
+        heli.yPos = heli.yPos + heli.yDelta;
+
+      }
+      else {                                // Almost about to land or crash!
+
+        switch (heli.stance) {
+
+          case 1 ... 3:
+          case 7 ... 10:
+          case 13 ... 14:
+          case 11:       
+              
+            if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 4) && heli.yDelta == 4)  { heli.yDelta = 2; }
+            if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 2) && heli.yDelta == 2)  { heli.yDelta = 1; }
+            if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 1) && heli.yDelta == 1)  { heli.yDelta = 0; }          
+
+            heli.yPos = heli.yPos + heli.yDelta;
+            tankBulletExplosion.yPos = tankBulletExplosion.yPos + heli.yDelta;
+            break;
+
+          default:
+
+            if (heli.yDelta == 4 && absT(heli.xDelta) >= 2) {
+
+              sound.tones(exploding);
+
+              heli.yPos = (HELICOPTER_MINIMUM_HEIGHT - heli.yDelta);
+              tankBulletExplosion.xPos = heli.xPos + 16;
+              tankBulletExplosion.yPos = heli.yPos + 4;
+              tankBulletExplosion.explosionType = ExplosionType::Large_1;
+              heli.yDelta = 0;
+              heli.countDown = 1;
+
+
+              // Kill any hostages that were in the helicopter ..
+
+              dead = dead + inHelicopter;
+              inHelicopter = 0;
+
+              for (int i = 0; i < NUMBER_OF_HOSTAGES; i++) {
+
+                Hostage *hostage = &hostages[i];
+                if (hostage->stance == HostageStance::In_Helicopter) hostage->stance = HostageStance::Dead;
+
+              }
+
+            }
+            else {
+              
+              if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 4) && heli.yDelta == 4)  { heli.yDelta = 2; }
+              if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 2) && heli.yDelta == 2)  { heli.yDelta = 1; }
+              if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 1) && heli.yDelta == 1)  { heli.yDelta = 0; }
+
+              heli.yPos = heli.yPos + heli.yDelta;
+              
+            }
+
+            break;
+
+        }
+
+      }
+
+      break;
+
+  }
+
+
+
   heli.yPos = heli.yPos + heli.yDelta;
   tankBulletExplosion.yPos = tankBulletExplosion.yPos + heli.yDelta;
   backgroundXOffset = backgroundXOffset - heli.xDelta;
@@ -252,7 +347,7 @@ void play() {
   hostageMovements();
 
 
-  // Update bullets ..
+  // Update player bullets ..
 
   for (int i = 0; i < NUMBER_OF_PLAYER_BULLETS; i++) {
 
@@ -284,7 +379,7 @@ void play() {
 
 
 
-  // Update bullets ..
+  // Update tank bullets ..
 
   for (int i = 0; i < NUMBER_OF_TANK_BULLETS; i++) {
 
@@ -315,6 +410,9 @@ void play() {
 
   tankMovements();
 
+
+  // Render screen ..
+
   render(0);
 
 
@@ -338,14 +436,26 @@ void play() {
 
   // ----------------------------------------------------------------------------------------
   
-  if (heli.yPos < (HELICOPTER_MAXIMUM_HEIGHT + 4) && heli.yDelta == -4) { heli.yDelta = -2; }
-  if (heli.yPos < (HELICOPTER_MAXIMUM_HEIGHT + 2) && heli.yDelta == -2) { heli.yDelta = -1; }
-  if (heli.yPos < (HELICOPTER_MAXIMUM_HEIGHT + 1) && heli.yDelta == -1) { heli.yDelta = 0; }
+  // switch (absT(heli.stance)) {
 
-  if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 4) && heli.yDelta == 4)  { heli.yDelta = 2; }
-  if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 2) && heli.yDelta == 2)  { heli.yDelta = 1; }
-  if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 1) && heli.yDelta == 1)  { heli.yDelta = 0; }
-  
+  //   case 1 ... 4:
+  //   case 7 ... 10:
+  //   case 13 ... 14:
+  //   case 11:
+
+  //     if (heli.yPos < (HELICOPTER_MAXIMUM_HEIGHT + 4) && heli.yDelta == -4) { heli.yDelta = -2; }
+  //     if (heli.yPos < (HELICOPTER_MAXIMUM_HEIGHT + 2) && heli.yDelta == -2) { heli.yDelta = -1; }
+  //     if (heli.yPos < (HELICOPTER_MAXIMUM_HEIGHT + 1) && heli.yDelta == -1) { heli.yDelta = 0; }
+
+  //     // if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 4) && heli.yDelta == 4)  { heli.yDelta = 2; }
+  //     // if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 2) && heli.yDelta == 2)  { heli.yDelta = 1; }
+  //     // if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 1) && heli.yDelta == 1)  { heli.yDelta = 0; }
+
+  //     break;
+
+  // }
+
+
 }
 
 
