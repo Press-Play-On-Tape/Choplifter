@@ -130,12 +130,11 @@ void resetGame() {
   dormitories[2] = { DormitoryState::Intact,  (DORMITORY_SPACING * 3) };
   dormitories[3] = { DormitoryState::Intact,  (DORMITORY_SPACING * 4) };
 
-  tanks[0] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (1 * TANK_SPACING) + random(100, 600), true};
-  tanks[1] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (2 * TANK_SPACING) + random(100, 600), true};
-  tanks[2] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (3 * TANK_SPACING) + random(100, 600), true};
-  tanks[3] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (4 * TANK_SPACING) + random(100, 600), true};
-  tanks[4] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (5 * TANK_SPACING) + random(100, 600), true};
-  tanks[5] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (6 * TANK_SPACING) + random(100, 600), true};
+  tanks[0] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (1 * DORMITORY_SPACING) + random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (1 * DORMITORY_SPACING), true, 0};
+  tanks[1] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (2 * DORMITORY_SPACING) + random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (2 * DORMITORY_SPACING), true, 0};
+  tanks[2] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (3 * DORMITORY_SPACING) + random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (3 * DORMITORY_SPACING), true, 0};
+  tanks[3] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (4 * DORMITORY_SPACING) + random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (4 * DORMITORY_SPACING), true, 0};
+  tanks[4] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (5 * DORMITORY_SPACING) + random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (5 * DORMITORY_SPACING), true, 0};
  
 
   for (int i = 0; i < NUMBER_OF_HOSTAGES; i++) {

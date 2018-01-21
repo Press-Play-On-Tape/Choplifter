@@ -113,6 +113,7 @@ struct Tank {
   TurrentDirection turrentDirection;
   uint8_t countDown;
   int16_t xPos;
+  int16_t startingXPos;
   bool track;
   uint8_t numberOfHits;
 };
@@ -121,17 +122,12 @@ struct Tank {
 #define NUMBER_OF_PLAYER_BULLETS            6
 #define NUMBER_OF_HOSTAGES                  64
 #define NUMBER_OF_DORMITORIES               4
-#define NUMBER_OF_TANKS                     6
+#define NUMBER_OF_TANKS                     5
 #define NUMBER_OF_SORTIES                   3
+#define NUMBER_OF_TANK_BULLETS              2
 
 #define BULLET_INACTIVE_X_VALUE             5000
 #define BULLET_SHOOT_HORIZONTAL             255
-
-#define NUMBER_OF_TANK_BULLETS              2
-#define TANK_SPACING                        400
-#define TANK_BULLET_MIN_Y_VALUE             25
-#define TANK_BULLET_NUMBER_OF_HITS          4
-#define TANK_FAR_RIGHT_POS                  225
 
 #define HELICOPTER_MAXIMUM_HEIGHT           (int8_t)-3
 #define HELICOPTER_MINIMUM_HEIGHT           (int8_t)40
@@ -147,7 +143,14 @@ struct Tank {
 
 #define DORMITORY_HITS_REQUIRED             5
 #define DORMITORY_SPACING                   400
+#define DORMITORY_SPACING_HALF              DORMITORY_SPACING / 2
 #define DORMITORY_HOSTAGE_CAPACITY          16
 
 #define HOSTAGE_FAR_RIGHT_POS               210
+
+#define TANK_SPACING                        DORMITORY_SPACING
+#define TANK_BULLET_MIN_Y_VALUE             25
+#define TANK_BULLET_NUMBER_OF_HITS          4
+#define TANK_FAR_RIGHT_POS                  225
+#define TANK_WIDTH                          30
 

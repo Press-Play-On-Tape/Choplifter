@@ -65,23 +65,31 @@ void tankMovements() {
 
       }
 
-
+      
       tank->countDown--;
 
+
+      // Tank has completed the last move.  Chose a new random move ..
+      
       if (tank->countDown == 0) {
 
         switch (random(0, 3)) {
 
           case 0 ... 1:
 
-            if (tankDif < -20) {
+            if (tankDif < -20 && tank->xPos < tank->startingXPos + DORMITORY_SPACING_HALF - TANK_WIDTH) {
 
               tank->state = TankState::Move_Left;
 
             }
-            else if (tankDif > 20) {
+            else if (tankDif > 20 && tank->xPos > tank->startingXPos - DORMITORY_SPACING_HALF + TANK_WIDTH) {
 
               tank->state = TankState::Move_Right;
+              
+            }
+            else {
+
+              tank->state = TankState::Stationary;
               
             }
 
