@@ -12,7 +12,7 @@ void tankMovements() {
 
   // Update tank ..
 
-  for (int i=0; i < NUMBER_OF_TANKS; i++) {
+  for (uint8_t i=0; i < NUMBER_OF_TANKS; i++) {
 
     Tank *tank = &tanks[i];
 
@@ -35,6 +35,8 @@ void tankMovements() {
             tank->state = TankState::Stationary;
           }
           break;
+
+        default: break;
 
       }
 
@@ -112,9 +114,9 @@ void tankMovements() {
 
       if (absT(tankDif) < 45) {
 
-        if (random(0, 25) == 0) {
+        if (random(0, (level == LEVEL_EASY ? 40 : 25) ) == 0) {
 
-          for (int i = 0; i < NUMBER_OF_TANK_BULLETS; i++) {
+          for (uint8_t i = 0; i < NUMBER_OF_TANK_BULLETS; i++) {
             
             Bullet *bullet = &tankBullets[i];
 

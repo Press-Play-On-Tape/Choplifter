@@ -91,6 +91,8 @@ void render(uint8_t sortie) {
             hostage->stance = (HostageStance)((uint8_t)hostage->stance - 1);
             break;
 
+          default: break;
+
         }
 
       }
@@ -334,6 +336,8 @@ void drawExplosion(BulletExplosion *bulletExplosion) {
         }
 
         break;
+
+      default: break;
 
     }
     

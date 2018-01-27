@@ -127,6 +127,8 @@ void hostageMovements() {
           }
           break;
 
+        default: break;
+
       }
 
 
@@ -164,6 +166,7 @@ void hostageMovements() {
               hostage->countDown = random(2, 5);
               break;
 
+            default: break;
 
           }
 

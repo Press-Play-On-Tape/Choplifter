@@ -16,6 +16,8 @@ uint8_t dead = 0;
 uint8_t safe = 0;
 uint8_t inHelicopter = 0;
 uint8_t sortieNumber = 0;
+uint8_t introduction_count = 0;
+uint8_t level = LEVEL_EASY;
 
 Stack <uint8_t, 10> playerStack;
 
@@ -95,8 +97,17 @@ void loop() {
 //
 void introduction() {
 
+
   arduboy.drawCompressedMirror(16, 24, choplifter, WHITE, false);
-  if (arduboy.justPressed(A_BUTTON)) { sound.tones(introduction_sound); gameState = GameState::Sortie; }
+  if (introduction_count > INTRODUCTION_DELAY) {
+    arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
+
+  }
+  else {
+      introduction_count++;
+  }
+  if (arduboy.justPressed(A_BUTTON)) { sound.tones(introduction_sound); level = LEVEL_EASY; gameState = GameState::Sortie; }
+  if (arduboy.justPressed(B_BUTTON)) { sound.tones(introduction_sound); level = LEVEL_HARD; gameState = GameState::Sortie; }
 
 }
 

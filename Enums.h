@@ -119,6 +119,10 @@ struct Tank {
 };
  
 
+#define INTRODUCTION_DELAY                  50
+#define LEVEL_EASY                          1
+#define LEVEL_HARD                          2
+
 #define NUMBER_OF_PLAYER_BULLETS            6
 #define NUMBER_OF_HOSTAGES                  64
 #define NUMBER_OF_DORMITORIES               4
@@ -150,7 +154,8 @@ struct Tank {
 
 #define TANK_SPACING                        DORMITORY_SPACING
 #define TANK_BULLET_MIN_Y_VALUE             25
-#define TANK_BULLET_NUMBER_OF_HITS          4
+#define TANK_BULLET_NUMBER_OF_HITS_EASY     4
+#define TANK_BULLET_NUMBER_OF_HITS_HARD     6
 #define TANK_FAR_RIGHT_POS                  225
 #define TANK_WIDTH                          30
 

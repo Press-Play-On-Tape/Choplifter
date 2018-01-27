@@ -67,7 +67,7 @@ int8_t calcSpeed(int8_t initValue, bool increase) {
     case -8:
       if (increase)  return -4;
 
-    default: break;
+    default: return 0;
 
   }
 
@@ -123,33 +123,34 @@ void resetGame() {
   inHelicopter = 0;
   safe = 0;
 
+  introduction_count = 0;
   sortieNumber = 1;
 
-  dormitories[0] = { DormitoryState::Open,    DORMITORY_SPACING };
-  dormitories[1] = { DormitoryState::Intact,  (DORMITORY_SPACING * 2) };
-  dormitories[2] = { DormitoryState::Intact,  (DORMITORY_SPACING * 3) };
-  dormitories[3] = { DormitoryState::Intact,  (DORMITORY_SPACING * 4) };
+  dormitories[0] = { DormitoryState::Open,    DORMITORY_SPACING,       0 };
+  dormitories[1] = { DormitoryState::Intact,  (DORMITORY_SPACING * 2), 0 };
+  dormitories[2] = { DormitoryState::Intact,  (DORMITORY_SPACING * 3), 0 };
+  dormitories[3] = { DormitoryState::Intact,  (DORMITORY_SPACING * 4), 0 };
 
-  tanks[0] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (1 * DORMITORY_SPACING) + random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (1 * DORMITORY_SPACING), true, 0};
-  tanks[1] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (2 * DORMITORY_SPACING) + random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (2 * DORMITORY_SPACING), true, 0};
-  tanks[2] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (3 * DORMITORY_SPACING) + random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (3 * DORMITORY_SPACING), true, 0};
-  tanks[3] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (4 * DORMITORY_SPACING) + random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (4 * DORMITORY_SPACING), true, 0};
-  tanks[4] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (5 * DORMITORY_SPACING) + random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (5 * DORMITORY_SPACING), true, 0};
+  tanks[0] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (1 * (int16_t)DORMITORY_SPACING) + (int16_t)random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (1 * (int16_t)DORMITORY_SPACING), true, 0};
+  tanks[1] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (2 * (int16_t)DORMITORY_SPACING) + (int16_t)random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (2 * (int16_t)DORMITORY_SPACING), true, 0};
+  tanks[2] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (3 * (int16_t)DORMITORY_SPACING) + (int16_t)random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (3 * (int16_t)DORMITORY_SPACING), true, 0};
+  tanks[3] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (4 * (int16_t)DORMITORY_SPACING) + (int16_t)random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (4 * (int16_t)DORMITORY_SPACING), true, 0};
+  tanks[4] = {TankState::Stationary, TurrentDirection::Left_Low, 5, (5 * (int16_t)DORMITORY_SPACING) + (int16_t)random(-DORMITORY_SPACING_HALF, DORMITORY_SPACING_HALF), (5 * (int16_t)DORMITORY_SPACING), true, 0};
  
 
-  for (int i = 0; i < NUMBER_OF_HOSTAGES; i++) {
+  for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
 
-      hostages[i] = { (i < 16 ? HostageStance::Leaving_Dorm : HostageStance::In_Dorm), ((i % 16) * 15) + 10, dormitories[i / 16].xPos };
+      hostages[i] = { (i < 16 ? HostageStance::Leaving_Dorm : HostageStance::In_Dorm), (uint8_t)(((i % 16) * 15) + 10), dormitories[i / 16].xPos };
 
   }
 
-  for (int i = 0; i < NUMBER_OF_PLAYER_BULLETS; i++) {
+  for (uint8_t i = 0; i < NUMBER_OF_PLAYER_BULLETS; i++) {
      
       playerBullets[i] = { BULLET_INACTIVE_X_VALUE, 0, 0, 0, 0 };
 
   }
 
-  for (int i = 0; i < NUMBER_OF_TANK_BULLETS; i++) {
+  for (uint8_t i = 0; i < NUMBER_OF_TANK_BULLETS; i++) {
      
       tankBullets[i] = { BULLET_INACTIVE_X_VALUE, 0, 0, 0, 0 };
 
@@ -343,7 +344,7 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
           for (uint8_t i = 0; i < NUMBER_OF_TANKS; i++) {
 
             Tank *tank = &tanks[i];
-            uint16_t diff = tank->xPos - bullet->xPos;
+            uint16_t diff = absT(tank->xPos - bullet->xPos);
 
             if (bullet->startYPos > TANK_BULLET_MIN_Y_VALUE && diff < 16) {  // Bullets that hit tank must be fired from down low ..
 
@@ -354,7 +355,7 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
 
               tank->numberOfHits++;
 
-              if (tank->numberOfHits == TANK_BULLET_NUMBER_OF_HITS) {
+              if (tank->numberOfHits == (level == LEVEL_EASY ? TANK_BULLET_NUMBER_OF_HITS_EASY : TANK_BULLET_NUMBER_OF_HITS_HARD) ) {
 
                 sound.tones(exploding);
 

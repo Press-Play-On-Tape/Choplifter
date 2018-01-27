@@ -26,7 +26,16 @@ void playerMovements() {
     
     if (heli.yPos < HELICOPTER_MINIMUM_HEIGHT) {
 
-      heli.yDelta = calcSpeed(heli.yDelta, true);  
+      if (level == LEVEL_HARD) {
+        heli.yDelta = calcSpeed(heli.yDelta, true);  
+      }
+      else {
+        
+        if (heli.yDelta < 1) {
+          heli.yDelta = calcSpeed(heli.yDelta, true);  
+        }
+
+      }
 
     }
 
