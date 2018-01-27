@@ -22,7 +22,7 @@ void hostageMovements() {
     // Collect hostages ..
 
     if (inHelicopter < HELICOPTER_HOSTAGE_CAPACITY &&
-        hostage->stance != HostageStance::Dead && hostage->stance <= HostageStance::Leaving_Dorm &&
+        hostage->stance != HostageStance::Dead && hostage->stance > HostageStance::In_Dorm && hostage->stance <= HostageStance::Leaving_Dorm &&
         heli.xPos > 50 && heli.yPos >= 40 && absT(hostage->xPos - heli.xPos) < 5
         ) {    
 
