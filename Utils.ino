@@ -102,7 +102,7 @@ void resetSortie() {
   heli.yPos = 40;
   heli.prevTurn = PREV_TURN_FROM_LEFT; 
   heli.hits = 0; 
-  heli.countDown = 0;
+  heli.countDown = HELICOPTER_COUNT_DOWN_INACTIVE;
 
   tankBulletExplosion.xPos = BULLET_INACTIVE_X_VALUE;
   playerBulletExplosion.xPos = BULLET_INACTIVE_X_VALUE;
@@ -224,8 +224,7 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
           sound.tones(exploding);
 
           explosion->explosionType = ExplosionType::Large_1;
-          heli.countDown++;
-
+          if (heli.countDown == HELICOPTER_COUNT_DOWN_INACTIVE) heli.countDown++;
 
 
           // Kill any hostages that were in the helicopter ..
@@ -332,6 +331,13 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
 
             hostage->stance = HostageStance::Dying_2;
             dead++;
+
+            if (dead + safe == NUMBER_OF_HOSTAGES) {
+
+              heli.countDown = HELICOPTER_END_OF_GAME_START;
+
+            }
+
             hit = true;
             break;
 

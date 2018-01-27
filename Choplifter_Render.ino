@@ -102,7 +102,7 @@ void render(uint8_t sortie) {
 
     // Draw helicopter ..
 
-    if (heli.countDown < 3) {
+    if (heli.countDown < HELICOPTER_COUNT_DOWN_MID || heli.countDown >= HELICOPTER_END_OF_GAME_START) {
 
       drawHelicopter(45, heli.yPos, heli.stance);
 
@@ -110,11 +110,11 @@ void render(uint8_t sortie) {
     else {
 
       heli.countDown++;
-      if (heli.countDown == 30) {
+      if (heli.countDown == HELICOPTER_COUNT_DOWN_END) {
 
         sortieNumber++;
 
-        if (sortieNumber <= NUMBER_OF_SORTIES) {
+        if (sortieNumber <= NUMBER_OF_SORTIES && dead + safe < NUMBER_OF_HOSTAGES) {
           gameState = GameState::Sortie;
         }
         else {
@@ -228,7 +228,7 @@ void render(uint8_t sortie) {
     if (tankBulletExplosion.xPos != BULLET_INACTIVE_X_VALUE) {
 
       drawExplosion(&tankBulletExplosion);
-      if (heli.countDown > 0) heli.countDown++;
+      if (heli.countDown > HELICOPTER_COUNT_DOWN_INACTIVE) heli.countDown++;
 
     }
 
@@ -366,9 +366,13 @@ void drawScoreBoard(bool all) {
   }
   else {
 
-    arduboy.drawCompressedMirror(0, 0, digit_Heart, WHITE, false);
-    arduboy.drawCompressedMirror(7, 0, digits[safe / 10], WHITE, false);
-    arduboy.drawCompressedMirror(12, 0, digits[safe % 10], WHITE, false);
+    arduboy.drawCompressedMirror(-1, 0, digit_Cross, WHITE, false);
+    arduboy.drawCompressedMirror(4, 0, digits[dead / 10], WHITE, false);
+    arduboy.drawCompressedMirror(9, 0, digits[dead % 10], WHITE, false);
+
+    arduboy.drawCompressedMirror(14, 0, digit_Heart, WHITE, false);
+    arduboy.drawCompressedMirror(21, 0, digits[safe / 10], WHITE, false);
+    arduboy.drawCompressedMirror(26, 0, digits[safe % 10], WHITE, false);
 
   }
 

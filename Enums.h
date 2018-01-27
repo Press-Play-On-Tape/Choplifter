@@ -159,3 +159,9 @@ struct Tank {
 #define TANK_FAR_RIGHT_POS                  225
 #define TANK_WIDTH                          30
 
+#define HELICOPTER_COUNT_DOWN_INACTIVE      0
+#define HELICOPTER_COUNT_DOWN_START         1
+#define HELICOPTER_COUNT_DOWN_MID           3
+#define HELICOPTER_COUNT_DOWN_END           30
+#define HELICOPTER_END_OF_GAME_START        50
+#define HELICOPTER_END_OF_GAME_END          75
