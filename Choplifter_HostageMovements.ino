@@ -12,7 +12,8 @@ void hostageMovements() {
 
   // Update hostages ..
 
-  HostageStance randomTopLimit = HostageStance::Running_Left_1;
+  HostageStance randomLowerLimit = HostageStance::Running_Left_1;
+  HostageStance randomTopLimit = HostageStance::Running_Right_4;
 
   for (uint8_t i = 0; i < NUMBER_OF_HOSTAGES; i++) {
 
@@ -157,7 +158,8 @@ void hostageMovements() {
         }
         else {
 
-          if (hostage->xPos > HOSTAGE_FAR_RIGHT_POS) { randomTopLimit = HostageStance::Running_Left_4; }  // Prevent hostage from crossing fence ..      
+          if (hostage->xPos < HOSTAGE_FAR_RIGHT_POS) { randomTopLimit = HostageStance::Running_Left_4; }  // Prevent hostage from crossing fence ..      
+          if (hostage->xPos > HOSTAGE_FAR_LEFT_POS)  { randomLowerLimit = HostageStance::Running_Right_1; }  // Prevent hostage from crossing fence ..      
 
           hostage->stance = (HostageStance)random((uint8_t)HostageStance::Running_Left_1, (uint8_t)randomTopLimit + 1);
 

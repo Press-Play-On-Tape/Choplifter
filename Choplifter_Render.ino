@@ -238,6 +238,8 @@ void render(uint8_t sortie) {
 
     switch (heli.xPos) {
 
+      // Right fence ..
+
       case 120 ... 159:
         arduboy.drawCompressedMirror(-24 + (heli.xPos - 150), 2, fence_00_mask, BLACK, true);
         arduboy.drawCompressedMirror(-24 + (heli.xPos - 150), 2, fence_00, WHITE, true);
@@ -273,6 +275,45 @@ void render(uint8_t sortie) {
         arduboy.drawCompressedMirror(84 + (heli.xPos - 210), 2, fence_00, WHITE, false);
         break;
       
+
+      // Left fence ..
+
+
+
+      case 2120 ... 2159:
+        arduboy.drawCompressedMirror(-24 + (heli.xPos - 2150), 2, fence_00_mask, BLACK, true);
+        arduboy.drawCompressedMirror(-24 + (heli.xPos - 2150), 2, fence_00, WHITE, true);
+        break;
+
+      case 2160 ... 2169:
+        arduboy.drawCompressedMirror(-16 + (heli.xPos - 2160), 2, fence_01_mask, BLACK, true);
+        arduboy.drawCompressedMirror(-16 + (heli.xPos - 2160), 2, fence_01, WHITE, true);
+        break;
+
+      case 2170 ... 2179:
+        arduboy.drawCompressedMirror(-8 + (heli.xPos - 2170), 2, fence_02_mask, BLACK, true);
+        arduboy.drawCompressedMirror(-8 + (heli.xPos - 2170), 2, fence_02, WHITE, true);
+        break;
+
+      case 2180 ... 2189:
+        arduboy.drawCompressedMirror(60 + (heli.xPos - 2180), 2, fence_03_mask, BLACK, false);
+        arduboy.drawCompressedMirror(60 + (heli.xPos - 2180), 2, fence_03, WHITE, false);
+        break;
+
+      case 2190 ... 2199:
+        arduboy.drawCompressedMirror(68 + (heli.xPos - 2190), 2, fence_02_mask, BLACK, false);
+        arduboy.drawCompressedMirror(68 + (heli.xPos - 2190), 2, fence_02, WHITE, false);
+        break;
+
+      case 2200 ... 2209:
+        arduboy.drawCompressedMirror(76 + (heli.xPos - 2200), 2, fence_01_mask, BLACK, false);
+        arduboy.drawCompressedMirror(76 + (heli.xPos - 2200), 2, fence_01, WHITE, false);
+        break;
+
+      case 2210 ... 2249:
+        arduboy.drawCompressedMirror(84 + (heli.xPos - 2210), 2, fence_00_mask, BLACK, false);
+        arduboy.drawCompressedMirror(84 + (heli.xPos - 2210), 2, fence_00, WHITE, false);
+        break;
     }
 
 
