@@ -166,7 +166,7 @@ void hostageMovements() {
           switch (hostage->stance) {
 
             case HostageStance::Running_Left_1 ... HostageStance::Running_Right_4:
-              hostage->countDown = random(5, 15);
+              hostage->countDown = random(5, 25);
               break;
 
             case HostageStance::Waving_11 ... HostageStance::Waving_22:
