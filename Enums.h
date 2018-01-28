@@ -119,7 +119,7 @@ struct Tank {
 };
  
 
-#define INTRODUCTION_DELAY                  50
+#define INTRODUCTION_DELAY                  65
 #define LEVEL_EASY                          1
 #define LEVEL_HARD                          2
 

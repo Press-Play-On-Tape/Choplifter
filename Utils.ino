@@ -77,7 +77,7 @@ int8_t calcSpeed(int8_t initValue, bool increase) {
 /* ----------------------------------------------------------------------------
  *  Draw the helicopter ..
  */
-void drawHelicopter(uint8_t x, int8_t y, int8_t image) {
+void drawHelicopter(int8_t x, int8_t y, int8_t image) {
 
   uint8_t index = absT(image);
   bool mirror = (image < 0);
@@ -119,6 +119,7 @@ void resetGame() {
 
   resetSortie();
 
+  heli.xPos = 160;
   dead = 0;
   inHelicopter = 0;
   safe = 0;

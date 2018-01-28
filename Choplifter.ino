@@ -63,6 +63,7 @@ void loop() {
 
     case GameState::Initialise:
       resetGame();
+      sound.tones(rideOfTHeValkyries);
       break;
 
     case GameState::Introduction:
@@ -92,11 +93,12 @@ void loop() {
 }
 
 
+
+
 // --------------------------------------------------------------------------------------
 //  Introduction ..
 //
 void introduction() {
-
 
   arduboy.drawCompressedMirror(16, 24, choplifter, WHITE, false);
   if (introduction_count > INTRODUCTION_DELAY) {
@@ -106,6 +108,13 @@ void introduction() {
   else {
       introduction_count++;
   }
+
+  if (heli.xPos > -60) {
+    arduboy.drawCompressedMirror(heli.xPos, 12, heli_06_intro_mask, BLACK, false);
+    drawHelicopter(heli.xPos, 12, 6);
+    heli.xPos = heli.xPos - 3;
+  }
+
   if (arduboy.justPressed(A_BUTTON)) { sound.tones(introduction_sound); level = LEVEL_EASY; gameState = GameState::Sortie; }
   if (arduboy.justPressed(B_BUTTON)) { sound.tones(introduction_sound); level = LEVEL_HARD; gameState = GameState::Sortie; }
 
