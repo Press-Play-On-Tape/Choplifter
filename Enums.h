@@ -151,7 +151,7 @@ struct Tank {
 #define DORMITORY_HOSTAGE_CAPACITY          16
 
 #define HOSTAGE_FAR_RIGHT_POS               210
-#define HOSTAGE_FAR_LEFT_POS                2210
+#define HOSTAGE_FAR_LEFT_POS                2130
 
 #define TANK_SPACING                        DORMITORY_SPACING
 #define TANK_BULLET_MIN_Y_VALUE             25

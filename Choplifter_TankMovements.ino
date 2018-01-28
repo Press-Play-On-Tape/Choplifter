@@ -77,16 +77,36 @@ void tankMovements() {
 
         switch (random(0, 3)) {
 
-          case 0 ... 1:
+          case 0:
 
-            if (tankDif < -20 && tank->xPos < tank->startingXPos + DORMITORY_SPACING_HALF - TANK_WIDTH) {
+            if (tankDif < -30 && tank->xPos < tank->startingXPos + DORMITORY_SPACING_HALF - TANK_WIDTH) {
 
               tank->state = TankState::Move_Left;
 
             }
-            else if (tankDif > 20 && tank->xPos > tank->startingXPos - DORMITORY_SPACING_HALF + TANK_WIDTH) {
+            else if (tankDif > 30 && tank->xPos > tank->startingXPos - DORMITORY_SPACING_HALF + TANK_WIDTH) {
 
               tank->state = TankState::Move_Right;
+              
+            }
+            else {
+
+              tank->state = TankState::Stationary;
+              
+            }
+
+            break;
+
+          case 1:
+
+            if (tankDif > 30 && tank->xPos > tank->startingXPos - DORMITORY_SPACING_HALF + TANK_WIDTH) {
+
+              tank->state = TankState::Move_Right;
+
+            }
+            else if (tankDif < -30 && tank->xPos < tank->startingXPos + DORMITORY_SPACING_HALF - TANK_WIDTH) {
+
+              tank->state = TankState::Move_Left;
               
             }
             else {
