@@ -204,7 +204,14 @@ void play() {
   if (!playerStack.isEmpty()) {
 
     if (arduboy.everyXFrames(2)) {
+
+      int8_t oldStance = heli.stance;
       heli.stance = playerStack.pop();
+
+      if (heli.stance == SET_DELTA_X_DECREASE) { heli.xInc = DELTA_X_DECREASE; heli.stance = playerStack.pop(); }
+      if (heli.stance == SET_DELTA_X_INCREASE) { heli.xInc = DELTA_X_INCREASE; heli.stance = playerStack.pop(); }
+      if (heli.stance == SET_DELTA_X_ZERO)     { heli.xInc = 0; heli.xDelta = 0; heli.stance = oldStance; }
+
     }
 
   }
@@ -313,6 +320,7 @@ void play() {
   heli.xPos = heli.xPos - heli.xDelta;
   if (backgroundXOffset < -64) backgroundXOffset = backgroundXOffset + 64;
   if (backgroundXOffset > 0)   backgroundXOffset = backgroundXOffset - 64;
+
 
 
   // Did we just land on hostages?
