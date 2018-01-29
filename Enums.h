@@ -166,3 +166,7 @@ struct Tank {
 #define HELICOPTER_COUNT_DOWN_END           30
 #define HELICOPTER_END_OF_GAME_START        50
 #define HELICOPTER_END_OF_GAME_END          75
+
+#define SET_DELTA_X_DECREASE                50
+#define SET_DELTA_X_INCREASE                51
+#define SET_DELTA_X_ZERO                    52
