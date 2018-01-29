@@ -113,51 +113,109 @@ void playerMovements() {
 
   if (arduboy.pressed(LEFT_BUTTON)) {
 
-    switch (heli.stance) {
+    if (heli.yPos < HELICOPTER_MINIMUM_HEIGHT) {
 
-      case 1:
-        playerStack.push(6, 5, 4);
-        playerStack.push(3, 2);
-        heli.xInc = DELTA_X_DECREASE;          
-        break;
+      switch (heli.stance) {
 
-      case 10:
-        playerStack.push(12, 11);
-        heli.xInc = DELTA_X_DECREASE;          
-        break;
+        case 1:
+          playerStack.push(6, 5, 4);
+          playerStack.push(3, 2);
+          heli.xInc = DELTA_X_DECREASE;          
+          break;
 
-      case 17:
-        playerStack.push(6, 5, 4);
-        playerStack.push(3, 2, 1);
-        playerStack.push(13, 14);
-        playerStack.push(15, 16);
-        heli.xInc = DELTA_X_DECREASE;          
-        break;
+        case 10:
+          playerStack.push(12, 11);
+          heli.xInc = DELTA_X_DECREASE;          
+          break;
 
-      case -1:
-        playerStack.push(-17, -16, -15);
-        playerStack.push(-14, -13);
-        heli.xInc = DELTA_X_DECREASE;          
-        break;
+        case 17:
+          playerStack.push(6, 5, 4);
+          playerStack.push(3, 2, 1);
+          playerStack.push(13, 14);
+          playerStack.push(15, 16);
+          heli.xInc = DELTA_X_DECREASE;          
+          break;
 
-      case -6:
-        playerStack.push(-17, -16, -15);
-        playerStack.push(-14, -13);
-        playerStack.push(-1, -2, -3);
-        playerStack.push(-4, -5);
-        heli.xInc = DELTA_X_DECREASE;          
-        break;
+        case -1:
+          playerStack.push(-17, -16, -15);
+          playerStack.push(-14, -13);
+          heli.xInc = DELTA_X_DECREASE;          
+          break;
 
-      case -12:
-        playerStack.push(12, 11);
-        playerStack.push(10, -11);
-        heli.xInc = DELTA_X_INCREASE;          
-        break;
+        case -6:
+          playerStack.push(-17, -16, -15);
+          playerStack.push(-14, -13);
+          playerStack.push(-1, -2, -3);
+          playerStack.push(-4, -5);
+          heli.xInc = DELTA_X_DECREASE;          
+          break;
 
-      default:
-        heli.xInc = DELTA_X_DECREASE;          
-        break;
-      
+        case -12:
+          playerStack.push(12, 11);
+          playerStack.push(10, -11);
+          heli.xInc = DELTA_X_INCREASE;          
+          break;
+
+        default:
+          heli.xInc = DELTA_X_DECREASE;          
+          break;
+        
+      }
+
+    }
+    else {    // We are on the ground.
+
+      switch (heli.stance) {
+
+        case 1:
+          playerStack.push(1, 2, 3);
+          playerStack.push(4, 5);
+          playerStack.push(SET_DELTA_X_INCREASE);
+          playerStack.push(6, 5, 4);
+          playerStack.push(3, 2);
+          heli.xInc = DELTA_X_DECREASE;          
+          break;
+
+        case 10:
+          playerStack.push(10, 11);
+          playerStack.push(SET_DELTA_X_INCREASE);
+          playerStack.push(12, 11);
+          heli.xInc = DELTA_X_DECREASE;          
+          break;
+
+        case 17:
+          playerStack.push(1);
+          playerStack.push(13, 14);
+          playerStack.push(15, 16);
+          heli.xInc = DELTA_X_DECREASE;          
+          break;
+
+        case -1:
+          playerStack.push(-1, -13, -14);
+          playerStack.push(-15, -16);
+          playerStack.push(SET_DELTA_X_INCREASE);
+          playerStack.push(-17, -16, -15);
+          playerStack.push(-14, -13);
+          heli.xInc = DELTA_X_DECREASE;          
+          break;
+
+        case -6:
+          playerStack.push(-1, -2, -3);
+          playerStack.push(-4, -5);
+          heli.xInc = DELTA_X_DECREASE;          
+          break;
+
+        case -12:
+          playerStack.push(12, 11);
+          playerStack.push(SET_DELTA_X_DECREASE);
+          playerStack.push(10, -11);
+          heli.xInc = DELTA_X_INCREASE;          
+          break;
+
+        default:
+          heli.xInc = DELTA_X_DECREASE;          
+          break;
+
     }
 
   } 
