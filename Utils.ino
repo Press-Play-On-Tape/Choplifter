@@ -225,8 +225,13 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
           sound.tones(exploding);
 
           explosion->explosionType = ExplosionType::Large_1;
-          if (heli.countDown == HELICOPTER_COUNT_DOWN_INACTIVE) heli.countDown++;
+          if (heli.countDown == HELICOPTER_COUNT_DOWN_INACTIVE) {
+            
+            heli.countDown++;
+            sound.tones(exploding);
 
+          }
+          
 
           // Kill any hostages that were in the helicopter ..
 

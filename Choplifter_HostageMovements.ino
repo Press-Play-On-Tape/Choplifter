@@ -68,6 +68,7 @@ void hostageMovements() {
         if (dead + safe == NUMBER_OF_HOSTAGES) {
 
           heli.countDown = HELICOPTER_END_OF_GAME_START;
+          
         }
 
     }

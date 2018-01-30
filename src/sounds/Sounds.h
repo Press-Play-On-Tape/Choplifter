@@ -14,6 +14,28 @@ const uint16_t introduction_sound[] PROGMEM = {
 NOTE_A6,40, 0, 5, NOTE_C6,40,  0, 5,  NOTE_E6,40, 0, 5, NOTE_G6,40,  0, 5, 
 TONES_END };
 
+const uint16_t blade_1[] PROGMEM = {
+NOTE_A2, 8, 0, 4, 
+TONES_END };
+
+const uint16_t blade_2[] PROGMEM = {
+NOTE_A2, 8, 0, 4, 
+NOTE_A2, 8, 0, 4, 
+TONES_END };
+
+const uint16_t blade_3[] PROGMEM = {
+NOTE_A2, 8, 0, 4, 
+NOTE_A2, 8, 0, 4, 
+NOTE_A2, 8, 0, 4, 
+TONES_END };
+
+const uint16_t blade_4[] PROGMEM = {
+NOTE_A2, 8, 0, 4, 
+NOTE_A2, 8, 0, 4, 
+NOTE_A2, 8, 0, 4, 
+NOTE_A2, 8, 0, 4, 
+TONES_END };
+
 const uint16_t player_firing[] PROGMEM = {
 NOTE_A4, 10, 0, 2, 
 NOTE_C4, 6, 0, 2,
@@ -72,3 +94,4 @@ NOTE_F1, 13, 0, 5,
 NOTE_A0, 13, 0, 8, 
 NOTE_C0, 6, 
 TONES_END };
+

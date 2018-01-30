@@ -472,6 +472,19 @@ void play() {
     }
 
   }
+
+
+  // heli blades ..
+
+  if (heli.countDown == HELICOPTER_COUNT_DOWN_INACTIVE) {
+
+    if      (absT(heli.xDelta) == 4 || absT(heli.yDelta) == 4 ) { sound.tones(blade_4); }
+    else if (absT(heli.xDelta) == 2 || absT(heli.yDelta) == 2 ) { sound.tones(blade_3); }
+    else if (absT(heli.xDelta) == 1 || absT(heli.yDelta) == 1 ) { sound.tones(blade_2); }
+    else                                                          sound.tones(blade_1);
+
+  }
+
     // arduboy.setCursor(1, 10);
     // arduboy.print(heli.stance);
     // arduboy.print(" ");
