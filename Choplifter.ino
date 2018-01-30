@@ -100,13 +100,41 @@ void loop() {
 //
 void introduction() {
 
-  arduboy.drawCompressedMirror(16, 24, choplifter, WHITE, false);
-  if (introduction_count > INTRODUCTION_DELAY) {
-    arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
+  introduction_count++;
 
-  }
-  else {
-      introduction_count++;
+  switch (introduction_count) {
+
+    case 0 ... 64:
+      arduboy.drawCompressedMirror(16, 24, choplifter, WHITE, false);
+      break;
+
+    case 65 ... 127:
+      arduboy.drawCompressedMirror(16, 24, choplifter, WHITE, false);
+      arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
+      break;
+
+    case 128:
+      heli.xPos = 150;
+      break;
+
+    case 129 ... 191:
+      arduboy.drawCompressedMirror(0, 0, filmote, WHITE, false);
+      arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
+      break;
+
+    case 192:
+      heli.xPos = 150;
+      break;
+
+    case 193 ... 254:
+      arduboy.drawCompressedMirror(0, 0, keyboard_camper, WHITE, false);
+      arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
+      break;
+
+    case 255:
+      introduction_count = 0;
+      break;
+
   }
 
   if (heli.xPos > -60) {
