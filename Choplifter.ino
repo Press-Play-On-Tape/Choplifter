@@ -100,11 +100,13 @@ void loop() {
 //
 void introduction() {
 
-  introduction_count++;
-
   switch (introduction_count) {
 
-    case 0 ... 64:
+    case 0:
+      heli.xPos = 160;
+      break;
+    
+    case 1 ... 64:
       arduboy.drawCompressedMirror(16, 24, choplifter, WHITE, false);
       break;
 
@@ -136,6 +138,8 @@ void introduction() {
       break;
 
   }
+
+  introduction_count++;
 
   if (heli.xPos > -60) {
     arduboy.drawCompressedMirror(heli.xPos, 12, heli_06_intro_mask, BLACK, false);
