@@ -472,7 +472,12 @@ void play() {
     }
 
   }
-
+    // arduboy.setCursor(1, 10);
+    // arduboy.print(heli.stance);
+    // arduboy.print(" ");
+    // arduboy.print(heli.xInc);
+    // arduboy.print(" ");
+    // arduboy.print(heli.xDelta);
 
   // -- DEBUG -------------------------------------------------------------------------------
 
