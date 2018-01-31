@@ -294,9 +294,9 @@ void playerMovements() {
           heli.xInc = DELTA_X_INCREASE;          
           break;
 
-        case -10:
+        case 10:
           playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(-10, -11, -11);
+          playerStack.push(10, -11, -11);
           playerStack.push(SET_DELTA_X_DECREASE);
           playerStack.push(-12, -11, -11);
           heli.xInc = DELTA_X_INCREASE;          
@@ -304,7 +304,7 @@ void playerMovements() {
 
         case -12:
           playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(-10, -11);
+          playerStack.push(10, -11);
           playerStack.push(SET_DELTA_X_DECREASE);
           playerStack.push(-11, -11);
           heli.xInc = DELTA_X_INCREASE;          

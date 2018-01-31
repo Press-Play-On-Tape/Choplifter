@@ -107,15 +107,17 @@ void introduction() {
       break;
     
     case 1 ... 64:
-      arduboy.drawCompressedMirror(16, 24, choplifter, WHITE, false);
+      arduboy.drawCompressedMirror(16, 23, choplifter, WHITE, false);
       break;
 
     case 65 ... 127:
-      arduboy.drawCompressedMirror(16, 24, choplifter, WHITE, false);
+      arduboy.drawCompressedMirror(16, 23, choplifter, WHITE, false);
       arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
       break;
 
     case 128:
+      arduboy.drawCompressedMirror(0, 0, filmote, WHITE, false);
+      arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
       heli.xPos = 150;
       break;
 
@@ -125,6 +127,8 @@ void introduction() {
       break;
 
     case 192:
+      arduboy.drawCompressedMirror(0, 0, keyboard_camper, WHITE, false);
+      arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
       heli.xPos = 150;
       break;
 
@@ -134,11 +138,19 @@ void introduction() {
       break;
 
     case 255:
+      arduboy.drawCompressedMirror(16, 23, choplifter, WHITE, false);
       heli.xPos = 170;
       introduction_count = 0;
       break;
 
   }
+
+  // if (introduction_count % 4 <= 2){
+  //   arduboy.drawCompressedMirror(3, 52, hostage_05, WHITE, false);
+  // }
+  // else {
+  //   arduboy.drawCompressedMirror(3, 52, hostage_06, WHITE, false);
+  // }
 
   introduction_count++;
 
