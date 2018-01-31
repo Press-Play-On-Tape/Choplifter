@@ -103,7 +103,7 @@ void introduction() {
   switch (introduction_count) {
 
     case 0:
-      heli.xPos = 160;
+      heli.xPos = 170;
       break;
     
     case 1 ... 64:
@@ -134,6 +134,7 @@ void introduction() {
       break;
 
     case 255:
+      heli.xPos = 170;
       introduction_count = 0;
       break;
 
