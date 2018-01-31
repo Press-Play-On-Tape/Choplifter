@@ -145,12 +145,14 @@ void introduction() {
 
   }
 
-  // if (introduction_count % 4 <= 2){
-  //   arduboy.drawCompressedMirror(3, 52, hostage_05, WHITE, false);
-  // }
-  // else {
-  //   arduboy.drawCompressedMirror(3, 52, hostage_06, WHITE, false);
-  // }
+  if (arduboy.pressed(UP_BUTTON)) {
+    if (introduction_count % 4 <= 2){
+      arduboy.drawCompressedMirror(3, 52, hostage_05, WHITE, false);
+    }
+    else {
+      arduboy.drawCompressedMirror(3, 52, hostage_06, WHITE, false);
+    }
+  }
 
   introduction_count++;
 

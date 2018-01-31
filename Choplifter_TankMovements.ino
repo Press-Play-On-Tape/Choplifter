@@ -49,15 +49,15 @@ void tankMovements() {
           tank->turrentDirection = TurrentDirection::Left_Low;
           break;
 
-        case -39 ... -10:
+        case -39 ... -13:
           tank->turrentDirection = TurrentDirection::Left_Mid;
           break;
 
-        case -9 ... 9:
+        case -12 ... 12:
           tank->turrentDirection = TurrentDirection::Upright;
           break;
 
-        case 10 ... 39:
+        case 13 ... 39:
           tank->turrentDirection = TurrentDirection::Right_Mid;
           break;
 
