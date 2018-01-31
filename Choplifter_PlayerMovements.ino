@@ -339,37 +339,43 @@ void playerMovements() {
     switch (heli.stance) {
 
       case 12:
+        playerStack.push(SET_DELTA_X_ZERO);
         playerStack.push(10, 11);
-        if (heli.xDelta != 0) heli.xInc = DELTA_X_INCREASE;
+        if (heli.xDelta != 0) heli.xInc = (heli.xDelta > 0 ? DELTA_X_DECREASE : DELTA_X_INCREASE);
         break;
 
       case -12:
+        playerStack.push(SET_DELTA_X_ZERO);
         playerStack.push(10, -11);
-        if (heli.xDelta != 0) heli.xInc = DELTA_X_DECREASE;
+        if (heli.xDelta != 0) heli.xInc = (heli.xDelta > 0 ? DELTA_X_DECREASE : DELTA_X_INCREASE);
         break;
 
       case 6:
+        playerStack.push(SET_DELTA_X_ZERO);
         playerStack.push(1, 2, 3);
         playerStack.push(4, 5);
-        if (heli.xDelta != 0) heli.xInc = DELTA_X_INCREASE;
+        if (heli.xDelta != 0) heli.xInc = (heli.xDelta > 0 ? DELTA_X_DECREASE : DELTA_X_INCREASE);
         break;
 
       case -6:
+        playerStack.push(SET_DELTA_X_ZERO);
         playerStack.push(-1, -2, -3);
         playerStack.push(-4, -5);
-        if (heli.xDelta != 0) heli.xInc = DELTA_X_DECREASE;
+        if (heli.xDelta != 0) heli.xInc = (heli.xDelta > 0 ? DELTA_X_DECREASE : DELTA_X_INCREASE);
         break;
       
       case 17:
+        playerStack.push(SET_DELTA_X_ZERO);
         playerStack.push(1, 13, 14);
         playerStack.push(15, 16);
-        if (heli.xDelta != 0) heli.xInc = DELTA_X_DECREASE;
+        if (heli.xDelta != 0) heli.xInc = (heli.xDelta > 0 ? DELTA_X_DECREASE : DELTA_X_INCREASE);
         break;
 
       case -17:
+        playerStack.push(SET_DELTA_X_ZERO);
         playerStack.push(-1, -13, -14);
         playerStack.push(-15, -16);
-        if (heli.xDelta != 0) heli.xInc = DELTA_X_INCREASE;
+        if (heli.xDelta != 0) heli.xInc = (heli.xDelta > 0 ? DELTA_X_DECREASE : DELTA_X_INCREASE); //inc
         break;
 
       default: break;

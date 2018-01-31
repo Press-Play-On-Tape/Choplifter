@@ -100,14 +100,47 @@ void loop() {
 //
 void introduction() {
 
-  arduboy.drawCompressedMirror(16, 24, choplifter, WHITE, false);
-  if (introduction_count > INTRODUCTION_DELAY) {
-    arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
+  switch (introduction_count) {
+
+    case 0:
+      heli.xPos = 170;
+      break;
+    
+    case 1 ... 64:
+      arduboy.drawCompressedMirror(16, 24, choplifter, WHITE, false);
+      break;
+
+    case 65 ... 127:
+      arduboy.drawCompressedMirror(16, 24, choplifter, WHITE, false);
+      arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
+      break;
+
+    case 128:
+      heli.xPos = 150;
+      break;
+
+    case 129 ... 191:
+      arduboy.drawCompressedMirror(0, 0, filmote, WHITE, false);
+      arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
+      break;
+
+    case 192:
+      heli.xPos = 150;
+      break;
+
+    case 193 ... 254:
+      arduboy.drawCompressedMirror(0, 0, keyboard_camper, WHITE, false);
+      arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
+      break;
+
+    case 255:
+      heli.xPos = 170;
+      introduction_count = 0;
+      break;
 
   }
-  else {
-      introduction_count++;
-  }
+
+  introduction_count++;
 
   if (heli.xPos > -60) {
     arduboy.drawCompressedMirror(heli.xPos, 12, heli_06_intro_mask, BLACK, false);
@@ -473,6 +506,24 @@ void play() {
 
   }
 
+
+  // heli blades ..
+
+  if (heli.countDown == HELICOPTER_COUNT_DOWN_INACTIVE) {
+
+    if      (absT(heli.xDelta) == 4 || absT(heli.yDelta) == 4 ) { sound.tones(blade_4); }
+    else if (absT(heli.xDelta) == 2 || absT(heli.yDelta) == 2 ) { sound.tones(blade_3); }
+    else if (absT(heli.xDelta) == 1 || absT(heli.yDelta) == 1 ) { sound.tones(blade_2); }
+    else                                                          sound.tones(blade_1);
+
+  }
+
+    // arduboy.setCursor(1, 10);
+    // arduboy.print(heli.stance);
+    // arduboy.print(" ");
+    // arduboy.print(heli.xInc);
+    // arduboy.print(" ");
+    // arduboy.print(heli.xDelta);
 
   // -- DEBUG -------------------------------------------------------------------------------
 

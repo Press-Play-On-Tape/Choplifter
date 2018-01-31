@@ -24,7 +24,7 @@ void hostageMovements() {
 
     if (inHelicopter < HELICOPTER_HOSTAGE_CAPACITY &&
         hostage->stance != HostageStance::Dead && hostage->stance > HostageStance::In_Dorm && hostage->stance <= HostageStance::Leaving_Dorm &&
-        heli.xPos > 50 && heli.yPos >= 40 && absT(hostage->xPos - heli.xPos) < 5
+        heli.countDown == HELICOPTER_COUNT_DOWN_INACTIVE && heli.xPos > 50 && heli.yPos >= 40 && absT(hostage->xPos - heli.xPos) < 5
         ) {    
 
       sound.tones(collect_hostage);
@@ -68,6 +68,7 @@ void hostageMovements() {
         if (dead + safe == NUMBER_OF_HOSTAGES) {
 
           heli.countDown = HELICOPTER_END_OF_GAME_START;
+
         }
 
     }
