@@ -19,7 +19,7 @@ uint8_t sortieNumber = 0;
 uint8_t introduction_count = 0;
 uint8_t level = LEVEL_EASY;
 
-Stack <uint8_t, 10> playerStack;
+Stack <HelicopterStance, 10> playerStack;
 
 Hostage hostages[NUMBER_OF_HOSTAGES];
 Dormitory dormitories[NUMBER_OF_DORMITORIES];
@@ -158,7 +158,7 @@ void introduction() {
 
   if (heli.xPos > -60) {
     arduboy.drawCompressedMirror(heli.xPos, 12, heli_06_intro_mask, BLACK, false);
-    drawHelicopter(heli.xPos, 12, 6);
+    drawHelicopter(heli.xPos, 12, HelicopterStance::Left_Incline_Max);
     heli.xPos = heli.xPos - 3;
   }
 
@@ -190,12 +190,12 @@ void play() {
 
   if (playerStack.isEmpty()) { playerMovements(); }
 
-  if (arduboy.justPressed(A_BUTTON) && (absT(heli.stance) <= 12 || absT(heli.stance) >=20)) {
+  if (arduboy.justPressed(A_BUTTON) && (absHelicopterStance(heli.stance) <= AbsHelicopterStance::Side_Front_Incline_2 || absHelicopterStance(heli.stance) >= AbsHelicopterStance::Side_Incline_Rotate_3)) {
 
-    switch (absT(heli.stance)) {
+    switch (absHelicopterStance(heli.stance)) {
 
-      case 1 ... 3:
-      case 13 ... 17:
+      case AbsHelicopterStance::Side_Level ... AbsHelicopterStance::Side_Incline_2:
+      case AbsHelicopterStance::Side_Reverse_Incline_1 ... AbsHelicopterStance::Side_Reverse_Incline_5:
 
         for (int i = 0; i < NUMBER_OF_PLAYER_BULLETS; i++) {
           
@@ -205,10 +205,10 @@ void play() {
 
             sound.tones(player_firing);
 
-            bullet->xPos = heli.xPos + (heli.stance < 0 ? -13 : 13);
+            bullet->xPos = heli.xPos + ((int8_t)heli.stance < 0 ? -13 : 13);
             bullet->yPos = heli.yPos + 15;
             bullet->yDelta = BULLET_SHOOT_HORIZONTAL;
-            bullet->xDelta = (heli.stance < 0 ? 8 : -8);
+            bullet->xDelta = ((int8_t)heli.stance < 0 ? 8 : -8);
             bullet->startYPos = bullet->yPos;
             break;
 
@@ -252,12 +252,12 @@ void play() {
 
     if (arduboy.everyXFrames(2)) {
 
-      int8_t oldStance = heli.stance;
+      HelicopterStance oldStance = heli.stance;
       heli.stance = playerStack.pop();
 
-      if (heli.stance == SET_DELTA_X_DECREASE) { heli.xInc = DELTA_X_DECREASE; heli.stance = playerStack.pop(); }
-      if (heli.stance == SET_DELTA_X_INCREASE) { heli.xInc = DELTA_X_INCREASE; heli.stance = playerStack.pop(); }
-      if (heli.stance == SET_DELTA_X_ZERO)     { heli.xInc = 0; heli.xDelta = 0; heli.stance = oldStance; }
+      if (heli.stance == HelicopterStance::Set_Delta_X_Decrease) { heli.xInc = DELTA_X_DECREASE; heli.stance = playerStack.pop(); }
+      if (heli.stance == HelicopterStance::Set_Delta_X_Increase) { heli.xInc = DELTA_X_INCREASE; heli.stance = playerStack.pop(); }
+      if (heli.stance == HelicopterStance::Set_Delta_X_Zero)     { heli.xInc = 0; heli.xDelta = 0; heli.stance = oldStance; }
 
     }
 
@@ -297,12 +297,12 @@ void play() {
       }
       else {                                // Almost about to land or crash!
 
-        switch (heli.stance) {
+        switch (absHelicopterStance(heli.stance)) {
 
-          case 1 ... 3:
-          case 7 ... 10:
-          case 13 ... 14:
-          case 11:       
+          case AbsHelicopterStance::Side_Level ... AbsHelicopterStance::Side_Incline_2:
+          case AbsHelicopterStance::Side_Level_Rotate_1 ... AbsHelicopterStance::Side_Front_Level:
+          case AbsHelicopterStance::Side_Reverse_Incline_1 ... AbsHelicopterStance::Side_Reverse_Incline_2:
+          case AbsHelicopterStance::Side_Front_Incline_1:       
               
             if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 4) && heli.yDelta == 4)  { heli.yDelta = 2; }
             if (heli.yPos > (HELICOPTER_MINIMUM_HEIGHT - 2) && heli.yDelta == 2)  { heli.yDelta = 1; }
@@ -381,11 +381,11 @@ void play() {
 
       if (hostage->stance >= HostageStance::Running_Left_1 && hostage->stance <= HostageStance::Waving_22) {
 
-        switch (absT(heli.stance)) {
+        switch (absHelicopterStance(heli.stance)) {
 
-          case 1 ... 6:
-          case 13 ... 17:
-          case 20:
+          case AbsHelicopterStance::Side_Level ... AbsHelicopterStance::Side_Incline_Max:
+          case AbsHelicopterStance::Side_Reverse_Incline_1 ... AbsHelicopterStance::Side_Reverse_Incline_5:
+          case AbsHelicopterStance::Side_Incline_Rotate_3:
       
             if (diff < 7) {
 
@@ -402,8 +402,8 @@ void play() {
 
             break;
 
-          case 7 ... 12:
-          case 18 ... 19:
+          case AbsHelicopterStance::Side_Level_Rotate_1 ... AbsHelicopterStance::Side_Front_Incline_2:
+          case AbsHelicopterStance::Side_Incline_Rotate_1 ... AbsHelicopterStance::Side_Incline_Rotate_2:
 
             if (diff < 4) {
 
@@ -523,6 +523,7 @@ void play() {
 
   // heli blades ..
 
+  #ifdef BLADE_SOUNDS
   if (heli.countDown == HELICOPTER_COUNT_DOWN_INACTIVE) {
 
     if      (absT(heli.xDelta) == 4 || absT(heli.yDelta) == 4 ) { sound.tones(blade_4); }
@@ -531,13 +532,7 @@ void play() {
     else                                                          sound.tones(blade_1);
 
   }
-
-    // arduboy.setCursor(1, 10);
-    // arduboy.print(heli.stance);
-    // arduboy.print(" ");
-    // arduboy.print(heli.xInc);
-    // arduboy.print(" ");
-    // arduboy.print(heli.xDelta);
+  #endif
 
   // -- DEBUG -------------------------------------------------------------------------------
 

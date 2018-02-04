@@ -50,27 +50,27 @@ void playerMovements() {
 
       switch (heli.stance) {
 
-        case 1:
-          playerStack.push(10, 9);
-          playerStack.push(8, 7);
+        case HelicopterStance::Left_Level:
+          playerStack.push(HelicopterStance::Front_Level, HelicopterStance::Left_Level_Rotate_3);
+          playerStack.push(HelicopterStance::Left_Level_Rotate_2, HelicopterStance::Left_Level_Rotate_1);
           heli.prevTurn = PREV_TURN_FROM_LEFT;
           break;
 
-        case -1:
-          playerStack.push(10, -9);
-          playerStack.push(-8, -7);
+        case HelicopterStance::Right_Level:
+          playerStack.push(HelicopterStance::Front_Level, HelicopterStance::Right_Level_Rotate_3);
+          playerStack.push(HelicopterStance::Right_Level_Rotate_2, HelicopterStance::Right_Level_Rotate_1);
           heli.prevTurn = PREV_TURN_FROM_RIGHT;
           break;
 
-        case 10:
+        case HelicopterStance::Front_Level:
 
           if (heli.prevTurn == PREV_TURN_FROM_LEFT) {
-            playerStack.push(-1, -7);
-            playerStack.push(-8, -9);
+            playerStack.push(HelicopterStance::Right_Level, HelicopterStance::Right_Level_Rotate_1);
+            playerStack.push(HelicopterStance::Right_Level_Rotate_2, HelicopterStance::Right_Level_Rotate_3);
           }
           else {
-            playerStack.push(1, 7);
-            playerStack.push(8, 9);
+            playerStack.push(HelicopterStance::Left_Level, HelicopterStance::Left_Level_Rotate_1);
+            playerStack.push(HelicopterStance::Left_Level_Rotate_2, HelicopterStance::Left_Level_Rotate_3);
           }
 
           break;
@@ -82,22 +82,22 @@ void playerMovements() {
 
       switch (heli.stance) {
 
-        case -17:
-          playerStack.push(6, 20);
-          playerStack.push(-19, -18);
+        case HelicopterStance::Right_Reverse_Incline_5:
+          playerStack.push(HelicopterStance::Left_Incline_Max, HelicopterStance::Left_Incline_Rotate_3);
+          playerStack.push(HelicopterStance::Left_Incline_Rotate_2, HelicopterStance::Left_Incline_Rotate_1);
           break;
 
-        case -12:
-          playerStack.push(-6, -20);
+        case HelicopterStance::Right_Front_Incline_2:
+          playerStack.push(HelicopterStance::Right_Incline_Max, HelicopterStance::Right_Incline_Rotate_3);
           break;
 
-        case 12:
-          playerStack.push(6, 20);
+        case HelicopterStance::Left_Front_Incline_2:
+          playerStack.push(HelicopterStance::Left_Incline_Max, HelicopterStance::Left_Incline_Rotate_3);
           break;
       
-        case 17:
-          playerStack.push(-6, -20);
-          playerStack.push(19, 18);
+        case HelicopterStance::Left_Reverse_Incline_5:
+          playerStack.push(HelicopterStance::Right_Incline_Max, HelicopterStance::Right_Incline_Rotate_3);
+          playerStack.push(HelicopterStance::Right_Incline_Rotate_2, HelicopterStance::Right_Incline_Rotate_1);
           break;
 
         default: break;
@@ -117,42 +117,42 @@ void playerMovements() {
 
       switch (heli.stance) {
 
-        case 1:
-          playerStack.push(6, 5, 4);
-          playerStack.push(3, 2);
+        case HelicopterStance::Left_Level:
+          playerStack.push(HelicopterStance::Left_Incline_Max, HelicopterStance::Left_Incline_4, HelicopterStance::Left_Incline_3);
+          playerStack.push(HelicopterStance::Left_Incline_2, HelicopterStance::Left_Incline_1);
           heli.xInc = DELTA_X_DECREASE;          
           break;
 
-        case 10:
-          playerStack.push(12, 11);
+        case HelicopterStance::Front_Level:
+          playerStack.push(HelicopterStance::Left_Front_Incline_2, HelicopterStance::Left_Front_Incline_1);
           heli.xInc = DELTA_X_DECREASE;          
           break;
 
-        case 17:
-          playerStack.push(6, 5, 4);
-          playerStack.push(3, 2, 1);
-          playerStack.push(13, 14);
-          playerStack.push(15, 16);
+        case HelicopterStance::Left_Reverse_Incline_5:
+          playerStack.push(HelicopterStance::Left_Incline_Max, HelicopterStance::Left_Incline_4, HelicopterStance::Left_Incline_3);
+          playerStack.push(HelicopterStance::Left_Incline_2, HelicopterStance::Left_Incline_1, HelicopterStance::Left_Level);
+          playerStack.push(HelicopterStance::Left_Reverse_Incline_1, HelicopterStance::Left_Reverse_Incline_2);
+          playerStack.push(HelicopterStance::Left_Reverse_Incline_3, HelicopterStance::Left_Reverse_Incline_4);
           heli.xInc = DELTA_X_DECREASE;          
           break;
 
-        case -1:
-          playerStack.push(-17, -16, -15);
-          playerStack.push(-14, -13);
+        case HelicopterStance::Right_Level:
+          playerStack.push(HelicopterStance::Right_Reverse_Incline_5, HelicopterStance::Right_Reverse_Incline_4, HelicopterStance::Right_Reverse_Incline_3);
+          playerStack.push(HelicopterStance::Right_Reverse_Incline_2, HelicopterStance::Right_Reverse_Incline_1);
           heli.xInc = DELTA_X_DECREASE;          
           break;
 
-        case -6:
-          playerStack.push(-17, -16, -15);
-          playerStack.push(-14, -13);
-          playerStack.push(-1, -2, -3);
-          playerStack.push(-4, -5);
+        case HelicopterStance::Right_Incline_Max:
+          playerStack.push(HelicopterStance::Right_Reverse_Incline_5, HelicopterStance::Right_Reverse_Incline_4, HelicopterStance::Right_Reverse_Incline_3);
+          playerStack.push(HelicopterStance::Right_Reverse_Incline_2, HelicopterStance::Right_Reverse_Incline_1);
+          playerStack.push(HelicopterStance::Right_Level, HelicopterStance::Right_Incline_1, HelicopterStance::Right_Incline_2);
+          playerStack.push(HelicopterStance::Right_Incline_3, HelicopterStance::Right_Incline_4);
           heli.xInc = DELTA_X_DECREASE;          
           break;
 
-        case -12:
-          playerStack.push(12, 11);
-          playerStack.push(10, -11);
+        case HelicopterStance::Right_Front_Incline_2:
+          playerStack.push(HelicopterStance::Left_Front_Incline_2, HelicopterStance::Left_Front_Incline_1);
+          playerStack.push(HelicopterStance::Front_Level, HelicopterStance::Right_Front_Incline_1);
           heli.xInc = DELTA_X_INCREASE;          
           break;
 
@@ -167,51 +167,51 @@ void playerMovements() {
 
       switch (heli.stance) {
 
-        case 1:
-          playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(1, 2, 3);
-          playerStack.push(3, SET_DELTA_X_INCREASE);
-          playerStack.push(3, 3, 2);
+        case HelicopterStance::Left_Level:
+          playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+          playerStack.push(HelicopterStance::Left_Level, HelicopterStance::Left_Incline_1, HelicopterStance::Left_Incline_2);
+          playerStack.push(HelicopterStance::Left_Incline_2, HelicopterStance::Set_Delta_X_Increase);
+          playerStack.push(HelicopterStance::Left_Incline_2, HelicopterStance::Left_Incline_2, HelicopterStance::Left_Incline_1);
           heli.xInc = DELTA_X_DECREASE;          
           break;
 
-        case 6:
-          playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(1, 2);
-          playerStack.push(3, 4, 5);
+        case HelicopterStance::Left_Incline_Max:
+          playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+          playerStack.push(HelicopterStance::Left_Level, HelicopterStance::Left_Incline_1);
+          playerStack.push(HelicopterStance::Left_Incline_2, HelicopterStance::Left_Incline_3, HelicopterStance::Left_Incline_4);
           heli.xInc = DELTA_X_DECREASE;          
           break;
 
-        case 10:
-          playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(10, 11, 11);
-          playerStack.push(SET_DELTA_X_INCREASE);
-          playerStack.push(12, 11, 11);
+        case HelicopterStance::Front_Level:
+          playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+          playerStack.push(HelicopterStance::Front_Level, HelicopterStance::Left_Front_Incline_1, HelicopterStance::Left_Front_Incline_1);
+          playerStack.push(HelicopterStance::Set_Delta_X_Increase);
+          playerStack.push(HelicopterStance::Left_Front_Incline_2, HelicopterStance::Left_Front_Incline_1, HelicopterStance::Left_Front_Incline_1);
           heli.xInc = DELTA_X_DECREASE;          
           break;
 
-        case 12:
-          playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(10, 11, 11);
-          playerStack.push(SET_DELTA_X_INCREASE);
-          playerStack.push(11);
+        case HelicopterStance::Left_Front_Incline_2:
+          playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+          playerStack.push(HelicopterStance::Front_Level, HelicopterStance::Left_Front_Incline_1, HelicopterStance::Left_Front_Incline_1);
+          playerStack.push(HelicopterStance::Set_Delta_X_Increase);
+          playerStack.push(HelicopterStance::Left_Front_Incline_1);
           heli.xInc = DELTA_X_DECREASE;          
           break;
 
-        case -17:
-          playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(-1);
-          playerStack.push(-14, -13);
-          playerStack.push(-16, -15);
+        case HelicopterStance::Right_Reverse_Incline_5:
+          playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+          playerStack.push(HelicopterStance::Right_Level);
+          playerStack.push(HelicopterStance::Right_Reverse_Incline_2, HelicopterStance::Right_Reverse_Incline_1);
+          playerStack.push(HelicopterStance::Right_Reverse_Incline_4, HelicopterStance::Right_Reverse_Incline_3);
           heli.xInc = DELTA_X_DECREASE;          
           break;
 
-        case -1:
-          playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(-1, -13);
-          playerStack.push(-14, -15);
-          playerStack.push(SET_DELTA_X_INCREASE);
-          playerStack.push(-15, -14, -13);
+        case HelicopterStance::Right_Level:
+          playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+          playerStack.push(HelicopterStance::Right_Level, HelicopterStance::Right_Reverse_Incline_1);
+          playerStack.push(HelicopterStance::Right_Reverse_Incline_2, HelicopterStance::Right_Reverse_Incline_3);
+          playerStack.push(HelicopterStance::Set_Delta_X_Increase);
+          playerStack.push(HelicopterStance::Right_Reverse_Incline_3, HelicopterStance::Right_Reverse_Incline_2, HelicopterStance::Right_Reverse_Incline_1);
           heli.xInc = DELTA_X_DECREASE;          
           break;
 
@@ -229,42 +229,42 @@ void playerMovements() {
 
       switch (heli.stance) {
 
-        case -1:
-          playerStack.push(-6, -5, -4);
-          playerStack.push(-3, -2);
+        case HelicopterStance::Right_Level:
+          playerStack.push(HelicopterStance::Right_Incline_Max, HelicopterStance::Right_Incline_4, HelicopterStance::Right_Incline_3);
+          playerStack.push(HelicopterStance::Right_Incline_2, HelicopterStance::Right_Incline_1);
           heli.xInc = DELTA_X_INCREASE; 
           break;
 
-        case 10:
-          playerStack.push(-12, -11);
+        case HelicopterStance::Front_Level:
+          playerStack.push(HelicopterStance::Right_Front_Incline_2, HelicopterStance::Right_Front_Incline_1);
           heli.xInc = DELTA_X_INCREASE; 
           break;
 
-        case -17:
-          playerStack.push(-6, -5, -4);
-          playerStack.push(-3, -2, -1);
-          playerStack.push(-13, -14);
-          playerStack.push(-15, -16);
+        case HelicopterStance::Right_Reverse_Incline_5:
+          playerStack.push(HelicopterStance::Right_Incline_Max, HelicopterStance::Right_Incline_4, HelicopterStance::Right_Incline_3);
+          playerStack.push(HelicopterStance::Right_Incline_2, HelicopterStance::Right_Incline_1, HelicopterStance::Right_Level);
+          playerStack.push(HelicopterStance::Right_Reverse_Incline_1, HelicopterStance::Right_Reverse_Incline_2);
+          playerStack.push(HelicopterStance::Right_Reverse_Incline_3, HelicopterStance::Right_Reverse_Incline_4);
           heli.xInc = DELTA_X_INCREASE; 
           break;
 
-        case 1:
-          playerStack.push(17, 16, 15);
-          playerStack.push(14, 13);
+        case HelicopterStance::Left_Level:
+          playerStack.push(HelicopterStance::Left_Reverse_Incline_5, HelicopterStance::Left_Reverse_Incline_4, HelicopterStance::Left_Reverse_Incline_3);
+          playerStack.push(HelicopterStance::Left_Reverse_Incline_2, HelicopterStance::Left_Reverse_Incline_1);
           heli.xInc = DELTA_X_INCREASE;       
           break;
 
-        case 6:
-          playerStack.push(17, 16, 15);
-          playerStack.push(14, 13);
-          playerStack.push(1, 2, 3);
-          playerStack.push(4, 5);
+        case HelicopterStance::Left_Incline_Max:
+          playerStack.push(HelicopterStance::Left_Reverse_Incline_5, HelicopterStance::Left_Reverse_Incline_4, HelicopterStance::Left_Reverse_Incline_3);
+          playerStack.push(HelicopterStance::Left_Reverse_Incline_2, HelicopterStance::Left_Reverse_Incline_1);
+          playerStack.push(HelicopterStance::Left_Level, HelicopterStance::Left_Incline_1, HelicopterStance::Left_Incline_2);
+          playerStack.push(HelicopterStance::Left_Incline_3, HelicopterStance::Left_Incline_4);
           heli.xInc = DELTA_X_INCREASE;       
           break;
 
-        case 12:
-          playerStack.push(-12, -11);
-          playerStack.push(10, 11);
+        case HelicopterStance::Left_Front_Incline_2:
+          playerStack.push(HelicopterStance::Right_Front_Incline_2, HelicopterStance::Right_Front_Incline_1);
+          playerStack.push(HelicopterStance::Front_Level, HelicopterStance::Left_Front_Incline_1);
           heli.xInc = DELTA_X_DECREASE;       
           break;
 
@@ -279,51 +279,51 @@ void playerMovements() {
 
       switch (heli.stance) {
 
-        case -1:
-          playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(-1, -2, -3);
-          playerStack.push(-3, SET_DELTA_X_DECREASE);
-          playerStack.push(-3, -3, -2);
+        case HelicopterStance::Right_Level:
+          playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+          playerStack.push(HelicopterStance::Right_Level, HelicopterStance::Right_Incline_1, HelicopterStance::Right_Incline_2);
+          playerStack.push(HelicopterStance::Right_Incline_2, HelicopterStance::Set_Delta_X_Decrease);
+          playerStack.push(HelicopterStance::Right_Incline_2, HelicopterStance::Right_Incline_2, HelicopterStance::Right_Incline_1);
           heli.xInc = DELTA_X_INCREASE;          
           break;
 
-        case -6:
-          playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(-1, -2);
-          playerStack.push(-3, -4, -5);
+        case HelicopterStance::Right_Incline_Max:
+          playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+          playerStack.push(HelicopterStance::Right_Level, HelicopterStance::Right_Incline_1);
+          playerStack.push(HelicopterStance::Right_Incline_2, HelicopterStance::Right_Incline_3, HelicopterStance::Right_Incline_4);
           heli.xInc = DELTA_X_INCREASE;          
           break;
 
-        case 10:
-          playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(10, -11, -11);
-          playerStack.push(SET_DELTA_X_DECREASE);
-          playerStack.push(-12, -11, -11);
+        case HelicopterStance::Front_Level:
+          playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+          playerStack.push(HelicopterStance::Front_Level, HelicopterStance::Right_Front_Incline_1, HelicopterStance::Right_Front_Incline_1);
+          playerStack.push(HelicopterStance::Set_Delta_X_Decrease);
+          playerStack.push(HelicopterStance::Right_Front_Incline_2, HelicopterStance::Right_Front_Incline_1, HelicopterStance::Right_Front_Incline_1);
           heli.xInc = DELTA_X_INCREASE;          
           break;
 
-        case -12:
-          playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(10, -11);
-          playerStack.push(SET_DELTA_X_DECREASE);
-          playerStack.push(-11, -11);
+        case HelicopterStance::Right_Front_Incline_2:
+          playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+          playerStack.push(HelicopterStance::Front_Level, HelicopterStance::Right_Front_Incline_1);
+          playerStack.push(HelicopterStance::Set_Delta_X_Decrease);
+          playerStack.push(HelicopterStance::Right_Front_Incline_1, HelicopterStance::Right_Front_Incline_1);
           heli.xInc = DELTA_X_INCREASE;          
           break;
 
-        case 17:
-          playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(1);
-          playerStack.push(14, 13);
-          playerStack.push(16, 15);
+        case HelicopterStance::Left_Reverse_Incline_5:
+          playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+          playerStack.push(HelicopterStance::Left_Level);
+          playerStack.push(HelicopterStance::Left_Reverse_Incline_2, HelicopterStance::Left_Reverse_Incline_1);
+          playerStack.push(HelicopterStance::Left_Reverse_Incline_4, HelicopterStance::Left_Reverse_Incline_3);
           heli.xInc = DELTA_X_INCREASE;          
           break;
 
-        case 1:
-          playerStack.push(SET_DELTA_X_ZERO);
-          playerStack.push(1, 13);
-          playerStack.push(14, 15);
-          playerStack.push(SET_DELTA_X_DECREASE);
-          playerStack.push(15, 14, 13);
+        case HelicopterStance::Left_Level:
+          playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+          playerStack.push(HelicopterStance::Left_Level, HelicopterStance::Left_Reverse_Incline_1);
+          playerStack.push(HelicopterStance::Left_Reverse_Incline_2, HelicopterStance::Left_Reverse_Incline_3);
+          playerStack.push(HelicopterStance::Set_Delta_X_Decrease);
+          playerStack.push(HelicopterStance::Left_Reverse_Incline_3, HelicopterStance::Left_Reverse_Incline_2, HelicopterStance::Left_Reverse_Incline_1);
           heli.xInc = DELTA_X_INCREASE;          
           break;
 
@@ -338,43 +338,43 @@ void playerMovements() {
 
     switch (heli.stance) {
 
-      case 12:
-        playerStack.push(SET_DELTA_X_ZERO);
-        playerStack.push(10, 11);
+      case HelicopterStance::Left_Front_Incline_2:
+        playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+        playerStack.push(HelicopterStance::Front_Level, HelicopterStance::Left_Front_Incline_1);
         if (heli.xDelta != 0) heli.xInc = (heli.xDelta > 0 ? DELTA_X_DECREASE : DELTA_X_INCREASE);
         break;
 
-      case -12:
-        playerStack.push(SET_DELTA_X_ZERO);
-        playerStack.push(10, -11);
+      case HelicopterStance::Right_Front_Incline_2:
+        playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+        playerStack.push(HelicopterStance::Front_Level, HelicopterStance::Right_Front_Incline_1);
         if (heli.xDelta != 0) heli.xInc = (heli.xDelta > 0 ? DELTA_X_DECREASE : DELTA_X_INCREASE);
         break;
 
-      case 6:
-        playerStack.push(SET_DELTA_X_ZERO);
-        playerStack.push(1, 2, 3);
-        playerStack.push(4, 5);
+      case HelicopterStance::Left_Incline_Max:
+        playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+        playerStack.push(HelicopterStance::Left_Level, HelicopterStance::Left_Incline_1, HelicopterStance::Left_Incline_2);
+        playerStack.push(HelicopterStance::Left_Incline_3, HelicopterStance::Left_Incline_4);
         if (heli.xDelta != 0) heli.xInc = (heli.xDelta > 0 ? DELTA_X_DECREASE : DELTA_X_INCREASE);
         break;
 
-      case -6:
-        playerStack.push(SET_DELTA_X_ZERO);
-        playerStack.push(-1, -2, -3);
-        playerStack.push(-4, -5);
+      case HelicopterStance::Right_Incline_Max:
+        playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+        playerStack.push(HelicopterStance::Right_Level, HelicopterStance::Right_Incline_1, HelicopterStance::Right_Incline_2);
+        playerStack.push(HelicopterStance::Right_Incline_3, HelicopterStance::Right_Incline_4);
         if (heli.xDelta != 0) heli.xInc = (heli.xDelta > 0 ? DELTA_X_DECREASE : DELTA_X_INCREASE);
         break;
       
-      case 17:
-        playerStack.push(SET_DELTA_X_ZERO);
-        playerStack.push(1, 13, 14);
-        playerStack.push(15, 16);
+      case HelicopterStance::Left_Reverse_Incline_5:
+        playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+        playerStack.push(HelicopterStance::Left_Level, HelicopterStance::Left_Reverse_Incline_1, HelicopterStance::Left_Reverse_Incline_2);
+        playerStack.push(HelicopterStance::Left_Reverse_Incline_3, HelicopterStance::Left_Reverse_Incline_4);
         if (heli.xDelta != 0) heli.xInc = (heli.xDelta > 0 ? DELTA_X_DECREASE : DELTA_X_INCREASE);
         break;
 
-      case -17:
-        playerStack.push(SET_DELTA_X_ZERO);
-        playerStack.push(-1, -13, -14);
-        playerStack.push(-15, -16);
+      case HelicopterStance::Right_Reverse_Incline_5:
+        playerStack.push(HelicopterStance::Set_Delta_X_Zero);
+        playerStack.push(HelicopterStance::Right_Level, HelicopterStance::Right_Reverse_Incline_1, HelicopterStance::Right_Reverse_Incline_2);
+        playerStack.push(HelicopterStance::Right_Reverse_Incline_3, HelicopterStance::Right_Reverse_Incline_4);
         if (heli.xDelta != 0) heli.xInc = (heli.xDelta > 0 ? DELTA_X_DECREASE : DELTA_X_INCREASE); //inc
         break;
 

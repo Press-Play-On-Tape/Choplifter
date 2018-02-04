@@ -40,9 +40,9 @@ void hostageMovements() {
 
     else if (hostage->stance == HostageStance::In_Helicopter && 
              heli.yPos >= 40 &&                                                                                               
-             ((heli.stance == 1 && heli.xPos < 26 && heli.xPos > -6) || 
-              (heli.stance == -1 && heli.xPos < 24 && heli.xPos > 2) || 
-              (heli.stance == 10 && heli.xPos < 24 && heli.xPos > -14))) {                
+             ((heli.stance == HelicopterStance::Left_Level && heli.xPos < 26 && heli.xPos > -6) || 
+              (heli.stance == HelicopterStance::Right_Level && heli.xPos < 24 && heli.xPos > 2) || 
+              (heli.stance == HelicopterStance::Front_Level && heli.xPos < 24 && heli.xPos > -14))) {                
 
       hostage->countDown--;
 

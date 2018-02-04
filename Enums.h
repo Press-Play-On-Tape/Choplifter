@@ -3,6 +3,7 @@
 #include "src/utils/Arduboy2Ext.h"
 
 #define _DEBUG
+#define _BLADE_SOUNDS
 
 enum class GameState : uint8_t {
   Initialise,
@@ -27,6 +28,80 @@ enum class TurrentDirection : uint8_t {
   Upright,
   Right_Mid,
   Right_Low
+};
+
+enum class HelicopterStance : int8_t {
+
+  Right_Incline_Rotate_3 = -20,
+  Right_Incline_Rotate_2,
+  Right_Incline_Rotate_1,
+  Right_Reverse_Incline_5 = -17,
+  Right_Reverse_Incline_4,
+  Right_Reverse_Incline_3,
+  Right_Reverse_Incline_2,
+  Right_Reverse_Incline_1 = -13,
+  Right_Front_Incline_2 = -12,
+  Right_Front_Incline_1,
+  Right_Level_Rotate_3 = -9,
+  Right_Level_Rotate_2,
+  Right_Level_Rotate_1,
+  Right_Incline_Max = -6,
+  Right_Incline_4,
+  Right_Incline_3,
+  Right_Incline_2,
+  Right_Incline_1,
+  Right_Level = -1,
+
+  Left_Level = 1,
+  Left_Incline_1,
+  Left_Incline_2,
+  Left_Incline_3,
+  Left_Incline_4,
+  Left_Incline_Max = 6,
+  Left_Level_Rotate_1,
+  Left_Level_Rotate_2,
+  Left_Level_Rotate_3,
+  Front_Level = 10,
+  Left_Front_Incline_1,
+  Left_Front_Incline_2,
+  Left_Reverse_Incline_1 = 13,
+  Left_Reverse_Incline_2,
+  Left_Reverse_Incline_3,
+  Left_Reverse_Incline_4,
+  Left_Reverse_Incline_5,
+  Left_Incline_Rotate_1 = 18,
+  Left_Incline_Rotate_2,
+  Left_Incline_Rotate_3,
+
+  Set_Delta_X_Decrease = 51,
+  Set_Delta_X_Increase = 52,
+  Set_Delta_X_Zero = 53,
+};
+
+
+enum class AbsHelicopterStance : uint8_t {
+
+  Side_Level = 1,
+  Side_Incline_1,
+  Side_Incline_2,
+  Side_Incline_3,
+  Side_Incline_4,
+  Side_Incline_Max = 6,
+  Side_Level_Rotate_1,
+  Side_Level_Rotate_2,
+  Side_Level_Rotate_3,
+  Side_Front_Level = 10,
+  Side_Front_Incline_1,
+  Side_Front_Incline_2,
+  Side_Reverse_Incline_1 = 13,
+  Side_Reverse_Incline_2,
+  Side_Reverse_Incline_3,
+  Side_Reverse_Incline_4,
+  Side_Reverse_Incline_5 = 17,
+  Side_Incline_Rotate_1,
+  Side_Incline_Rotate_2,
+  Side_Incline_Rotate_3,
+
 };
 
 enum class HostageStance : uint8_t {
@@ -71,7 +146,7 @@ enum class DormitoryState : uint8_t {
 };
 
 struct Helicopter {
-  int8_t stance;
+  HelicopterStance stance;
   int16_t xPos;
   int8_t yPos;
   int8_t xDelta;
@@ -167,6 +242,4 @@ struct Tank {
 #define HELICOPTER_END_OF_GAME_START        50
 #define HELICOPTER_END_OF_GAME_END          75
 
-#define SET_DELTA_X_DECREASE                50
-#define SET_DELTA_X_INCREASE                51
-#define SET_DELTA_X_ZERO                    52
+

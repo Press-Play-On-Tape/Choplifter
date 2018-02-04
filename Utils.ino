@@ -12,6 +12,12 @@ template<typename T> T absT(const T & v) {
 }
 
 
+AbsHelicopterStance absHelicopterStance(HelicopterStance helicopterStance) {
+
+  return (AbsHelicopterStance)absT((int8_t)helicopterStance);
+
+}
+
 /* ----------------------------------------------------------------------------
  *  Draw a horizontal dotted line. 
  *  
@@ -77,10 +83,10 @@ int8_t calcSpeed(int8_t initValue, bool increase) {
 /* ----------------------------------------------------------------------------
  *  Draw the helicopter ..
  */
-void drawHelicopter(int8_t x, int8_t y, int8_t image) {
+void drawHelicopter(int8_t x, int8_t y, HelicopterStance image) {
 
-  uint8_t index = absT(image);
-  bool mirror = (image < 0);
+  uint8_t index = (uint8_t)absHelicopterStance(image);
+  bool mirror = ((int8_t)image < 0);
 
   arduboy.drawCompressedMirror(x, y, helicopter[((index - 1) * 6) + 1], BLACK, mirror);
   arduboy.drawCompressedMirror(x, y, helicopter[(index - 1) * 6], WHITE, mirror);
@@ -94,7 +100,7 @@ void drawHelicopter(int8_t x, int8_t y, int8_t image) {
  */
 void resetSortie() {
 
-  heli.stance = 1;
+  heli.stance = HelicopterStance::Left_Level;
   heli.xDelta = 0;
   heli.yDelta = 0;
   heli.xInc = DELTA_X_DO_NOTHING;
@@ -175,11 +181,11 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
 
     if (!playerBullet) {
 
-      switch (absT(heli.stance)) {
+      switch (absHelicopterStance(heli.stance)) {
 
-        case 1 ... 3:
-        case 13 ... 17:
-        case 20:
+        case AbsHelicopterStance::Side_Level ... AbsHelicopterStance::Side_Incline_2:
+        case AbsHelicopterStance::Side_Reverse_Incline_1 ... AbsHelicopterStance::Side_Reverse_Incline_5:
+        case AbsHelicopterStance::Side_Incline_Rotate_3:
     
           hitZone.x = 50;
           hitZone.y = heli.yPos + 5;
@@ -188,7 +194,7 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
 
           break;
 
-        case 4 ... 6:
+        case AbsHelicopterStance::Side_Incline_3 ... AbsHelicopterStance::Side_Incline_Max:
     
           hitZone.x = 50;
           hitZone.y = heli.yPos + 7;
@@ -197,8 +203,8 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
 
           break;
 
-        case 7 ... 12:
-        case 18 ... 19:
+        case AbsHelicopterStance::Side_Level_Rotate_1 ... AbsHelicopterStance::Side_Front_Incline_2:
+        case AbsHelicopterStance::Side_Incline_Rotate_1 ... AbsHelicopterStance::Side_Incline_Rotate_2:
 
           hitZone.x = 57;
           hitZone.y = heli.yPos + 5;
