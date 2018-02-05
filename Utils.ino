@@ -270,8 +270,8 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
       for (uint8_t i = 0; i < NUMBER_OF_DORMITORIES; i++) {
 
         Dormitory *dormitory = &dormitories[i];
-        uint16_t diff = dormitory->xPos - bullet->xPos;
-
+        uint16_t diff = absT(dormitory->xPos - bullet->xPos);
+ 
         if (dormitory->state == DormitoryState::Intact && diff < 16) {
 
             dormitory->numberOfHits++;
