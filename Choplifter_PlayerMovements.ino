@@ -75,6 +75,7 @@ void playerMovements() {
 
           break;
 
+          default: break;
       }
 
     }
