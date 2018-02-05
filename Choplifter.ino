@@ -6,7 +6,7 @@
 #include "src/sounds/Sounds.h"
 
 Arduboy2Ext arduboy;
-ArduboyTones sound(arduboy.audio.on);
+ArduboyTones sound(arduboy.audio.enabled);
 
 Helicopter heli;
 
