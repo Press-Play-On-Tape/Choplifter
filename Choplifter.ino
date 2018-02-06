@@ -39,6 +39,8 @@ void setup() {
 
   arduboy.boot();
   arduboy.flashlight();
+  arduboy.systemButtons();
+  arduboy.audio.begin();
   arduboy.setFrameRate(25);
   arduboy.initRandomSeed();
 
@@ -117,13 +119,13 @@ void introduction() {
 
     case 128:
       arduboy.drawCompressedMirror(0, 0, filmote, WHITE, false);
-      arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
+      arduboy.drawCompressedMirror(32, 54, selection2, WHITE, false);
       heli.xPos = 150;
       break;
 
     case 129 ... 191:
       arduboy.drawCompressedMirror(0, 0, filmote, WHITE, false);
-      arduboy.drawCompressedMirror(36, 54, selection, WHITE, false);
+      arduboy.drawCompressedMirror(32, 54, selection2, WHITE, false);
       break;
 
     case 192:
@@ -145,7 +147,7 @@ void introduction() {
 
   }
 
-  if (arduboy.pressed(UP_BUTTON)) {
+  if (arduboy.pressed(LEFT_BUTTON)) {
     if (introduction_count % 4 <= 2){
       arduboy.drawCompressedMirror(3, 52, hostage_05, WHITE, false);
     }
@@ -162,9 +164,10 @@ void introduction() {
     heli.xPos = heli.xPos - 3;
   }
 
-  if (arduboy.justPressed(A_BUTTON)) { sound.tones(introduction_sound); level = LEVEL_EASY; gameState = GameState::Sortie; }
-  if (arduboy.justPressed(B_BUTTON)) { sound.tones(introduction_sound); level = LEVEL_HARD; gameState = GameState::Sortie; }
-
+  if (arduboy.justPressed(A_BUTTON))      { sound.tones(introduction_sound); level = LEVEL_EASY; gameState = GameState::Sortie; }
+  if (arduboy.justPressed(B_BUTTON))      { sound.tones(introduction_sound); level = LEVEL_HARD; gameState = GameState::Sortie; }
+  if (arduboy.justPressed(UP_BUTTON))     { turnSoundOn(); }
+  if (arduboy.justPressed(DOWN_BUTTON))   { turnSoundOff(); }
 }
 
 
