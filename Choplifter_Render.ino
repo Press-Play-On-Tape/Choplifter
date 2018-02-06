@@ -41,18 +41,24 @@ void render(uint8_t sortie) {
 
       if ((dormitory->xPos > heli.xPos - 144) && (dormitory->xPos < heli.xPos + 144)) {
 
+        const uint8_t * mask = nullptr;
+        const uint8_t * image = nullptr;
+      
         if (dormitory->state == DormitoryState::Intact) {
 
-          arduboy.drawCompressedMirror(heli.xPos - dormitory->xPos + 64 - 15, 40, dormitory_01_mask, BLACK, false);
-          arduboy.drawCompressedMirror(heli.xPos - dormitory->xPos + 64 - 15, 40, dormitory_01, WHITE, false);
+          mask = dormitory_01_mask;
+          image = dormitory_01;
 
         }
         else {
 
-          arduboy.drawCompressedMirror(heli.xPos - dormitory->xPos + 64 - 15, 40, dormitory_02_mask, BLACK, false);
-          arduboy.drawCompressedMirror(heli.xPos - dormitory->xPos + 64 - 15, 40, dormitory_02, WHITE, false);
+          mask = dormitory_02_mask;
+          image = dormitory_02;
           
         }
+        arduboy.drawCompressedMirror(heli.xPos - dormitory->xPos + 64 - 15, 40, mask, BLACK, false);
+        arduboy.drawCompressedMirror(heli.xPos - dormitory->xPos + 64 - 15, 40, image, WHITE, false);
+          
 
       }
 
