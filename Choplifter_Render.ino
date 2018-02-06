@@ -73,33 +73,39 @@ void render(uint8_t sortie) {
 
       if ((hostage->xPos > heli.xPos - 133) && (hostage->xPos < heli.xPos + 133)) {
 
+        const uint8_t * image = nullptr;
+        bool flag = false;
+
         switch (hostage->stance) {
 
           case HostageStance::Running_Left_1 ... HostageStance::Running_Left_4:
-            arduboy.drawCompressedMirror(heli.xPos - hostage->xPos + 64 - 3, 48, hostage_images[(uint8_t)hostage->stance - 1], WHITE, false);
+            image = hostage_images[(uint8_t)hostage->stance - 1];
             break;
 
           case HostageStance::Running_Right_1 ... HostageStance::Running_Right_4:
-            arduboy.drawCompressedMirror(heli.xPos - hostage->xPos + 64 - 3, 48, hostage_images[(uint8_t)hostage->stance - 5], WHITE, true);
+            image = hostage_images[(uint8_t)hostage->stance - 5];
+            flag = true;
             break;
 
           case HostageStance::Waving_11 ... HostageStance::Waving_12:
-            arduboy.drawCompressedMirror(heli.xPos - hostage->xPos + 64 - 3, 48, hostage_05, WHITE, false);
+            image = hostage_05;
             break;
 
           case HostageStance::Waving_21 ... HostageStance::Waving_22:
-            arduboy.drawCompressedMirror(heli.xPos - hostage->xPos + 64 - 3, 48, hostage_06, WHITE, false);
+            image = hostage_06;
             break;
 
           case HostageStance::Dying_1:
           case HostageStance::Dying_2:
-            arduboy.drawCompressedMirror(heli.xPos - hostage->xPos + 64 - 3, 48, hostage_07, WHITE, false);
+            image = hostage_07;
             hostage->stance = (HostageStance)((uint8_t)hostage->stance - 1);
             break;
 
           default: break;
 
         }
+
+        arduboy.drawCompressedMirror(heli.xPos - hostage->xPos + 64 - 3, 48, image, WHITE, flag);
 
       }
 
