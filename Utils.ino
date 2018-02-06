@@ -405,3 +405,25 @@ void bulletHit(Bullet *bullet, BulletExplosion *explosion, bool playerBullet) {
   }
 
 }
+
+/* ----------------------------------------------------------------------------
+ *  Turn sound off and commit to the EEPROM.
+ */
+void turnSoundOff() {
+
+  arduboy.audio.off(); 
+  arduboy.audio.saveOnOff();
+    
+}
+
+
+
+/* ----------------------------------------------------------------------------
+ *  Turn sound on and commit to the EEPROM.
+ */
+void turnSoundOn() {
+
+  arduboy.audio.on(); 
+  arduboy.audio.saveOnOff();
+    
+}
