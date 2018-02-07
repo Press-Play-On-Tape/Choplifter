@@ -15,7 +15,9 @@ void drawBullet(const Bullet & bullet)
     }
 }
 
-const uint8_t * const renderTankLookup[] PROGMEM = {tank_turrent_00,tank_turrent_01,tank_turrent_02,tank_turrent_01,tank_turrent_00};
+const uint8_t * const renderSortieLookup[] PROGMEM = { sortie_01, sortie_02, sortie_03 };
+
+const uint8_t * const renderTankLookup[] PROGMEM = { tank_turrent_00, tank_turrent_01, tank_turrent_02, tank_turrent_01, tank_turrent_00 };
 
 /* ----------------------------------------------------------------------------
  *  Render the screen ..
@@ -46,8 +48,13 @@ void render(uint8_t sortie) {
 
 
   // Draw dormitories ..
+  
+  if (sortie > 0) {
+  
+    arduboy.drawCompressedMirror(38, 22, reinterpret_cast<const uint8_t *>(&renderSortieLookup[sortie - 1]), WHITE, false);
 
-  if (sortie == 0) {
+  }
+  else {
 
     for (uint8_t i = 0; i < NUMBER_OF_DORMITORIES; i++) {
 
@@ -307,25 +314,7 @@ void render(uint8_t sortie) {
     drawScoreBoard(true);
 
   }
-  else {
-  
-    switch (sortie) {
 
-      case 1:
-        arduboy.drawCompressedMirror(38, 22, sortie_01, WHITE, false);
-        break;
-
-      case 2:
-        arduboy.drawCompressedMirror(38, 22, sortie_02, WHITE, false);
-        break;
-
-      case 3:
-        arduboy.drawCompressedMirror(38, 22, sortie_03, WHITE, false);
-        break;
-    
-    }
-
-  }
 
 }
 
