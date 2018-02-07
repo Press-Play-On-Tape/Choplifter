@@ -2,6 +2,7 @@
 #include "Enums.h"
 #include "Images.h"
 
+const uint8_t * const renderTankLookup[] PROGMEM = {tank_turrent_00,tank_turrent_01,tank_turrent_02,tank_turrent_01,tank_turrent_00};
 
 /* ----------------------------------------------------------------------------
  *  Render the screen ..
@@ -149,30 +150,10 @@ void render(uint8_t sortie) {
         arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, tank_00_mask, BLACK, false);
         arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, (tank->track ? tank_00 : tank_01), WHITE, false);
 
-        switch (tank->turrentDirection) {
+        const uint8_t * image = reinterpret_cast<const uint8_t *>(pgm_read_word(&renderTankLookup[(uint8_t)tank->turrentDirection]));
+        bool flag = ((uint8_t)tank->turrentDirection < (uint8_t)TurrentDirection::Upright);
 
-          case TurrentDirection::Left_Low:
-            arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, tank_turrent_00, WHITE, true);
-            break;
-
-          case TurrentDirection::Left_Mid:
-            arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, tank_turrent_01, WHITE, true);
-            break;
-
-          case TurrentDirection::Upright:
-            arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, tank_turrent_02, WHITE, false);
-            break;
-
-          case TurrentDirection::Right_Mid:
-            arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, tank_turrent_01, WHITE, false);
-            break;
-
-          case TurrentDirection::Right_Low:
-            arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, tank_turrent_00, WHITE, false);
-            break;
-          
-
-        }
+        arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, image, WHITE, flag);
 
         if (tank->state == TankState::Move_Left || tank->state == TankState::Move_Right) tank->track = !tank->track;
 
