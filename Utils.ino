@@ -427,3 +427,21 @@ void turnSoundOn() {
   arduboy.audio.saveOnOff();
     
 }
+
+/* ----------------------------------------------------------------------------
+ *  Helper function for using image lookup arrays
+ */
+const uint8_t * imageArrayLookup(const uint8_t * const * const array) {
+
+    return reinterpret_cast<const uint8_t *>(pgm_read_word(array));
+
+}
+
+/* ----------------------------------------------------------------------------
+ *  Alternate helper function for using image lookup arrays
+ */
+template< typename IntT > const uint8_t * imageArrayLookup(const uint8_t * const * const array, IntT index) {
+
+    return reinterpret_cast<const uint8_t *>(pgm_read_word(&array[index]));
+
+}
