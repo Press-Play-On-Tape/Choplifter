@@ -113,7 +113,8 @@ void render(uint8_t sortie) {
 
         }
 
-        arduboy.drawCompressedMirror(heli.xPos - hostage->xPos + 64 - 3, 48, image, WHITE, flag);
+        if(image != nullptr)
+          arduboy.drawCompressedMirror(heli.xPos - hostage->xPos + 64 - 3, 48, image, WHITE, flag);
 
       }
 
