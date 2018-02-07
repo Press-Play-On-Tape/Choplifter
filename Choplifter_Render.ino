@@ -2,19 +2,6 @@
 #include "Enums.h"
 #include "Images.h"
 
-void drawBullet(const Bullet & bullet)
-{
-    if (bullet.xPos != BULLET_INACTIVE_X_VALUE) {
-  
-        if ((bullet.xPos > heli.xPos - 144) && (bullet.xPos < heli.xPos + 144)) {
-
-          arduboy.fillRect(heli.xPos - bullet.xPos + 64 - 1, bullet.yPos, 2, 2, WHITE);
-
-        }
-    
-    }
-}
-
 const uint8_t * const renderSortieLookup[] PROGMEM = { sortie_01, sortie_02, sortie_03 };
 
 const uint8_t * const renderTankLookup[] PROGMEM = { tank_turrent_00, tank_turrent_01, tank_turrent_02, tank_turrent_01, tank_turrent_00 };
@@ -316,6 +303,19 @@ void render(uint8_t sortie) {
   }
 
 
+}
+
+void drawBullet(const Bullet & bullet)
+{
+    if (bullet.xPos != BULLET_INACTIVE_X_VALUE) {
+  
+        if ((bullet.xPos > heli.xPos - 144) && (bullet.xPos < heli.xPos + 144)) {
+
+          arduboy.fillRect(heli.xPos - bullet.xPos + 64 - 1, bullet.yPos, 2, 2, WHITE);
+
+        }
+    
+    }
 }
 
 void drawExplosion(BulletExplosion *bulletExplosion) {
