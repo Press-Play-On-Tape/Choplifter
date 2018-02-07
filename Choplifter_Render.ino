@@ -364,11 +364,11 @@ void drawExplosion(BulletExplosion *bulletExplosion) {
  */
 void drawScoreBoard(bool all) {
 
-  if (all) {
+  arduboy.drawCompressedMirror(-1, 0, digit_Cross, WHITE, false);
+  arduboy.drawCompressedMirror(4, 0, digits[dead / 10], WHITE, false);
+  arduboy.drawCompressedMirror(9, 0, digits[dead % 10], WHITE, false);
 
-    arduboy.drawCompressedMirror(-1, 0, digit_Cross, WHITE, false);
-    arduboy.drawCompressedMirror(4, 0, digits[dead / 10], WHITE, false);
-    arduboy.drawCompressedMirror(9, 0, digits[dead % 10], WHITE, false);
+  if (all) {
     
     arduboy.drawCompressedMirror(14, 0, digit_Diamond, WHITE, false);
     arduboy.drawCompressedMirror(21, 0, digits[inHelicopter / 10], WHITE, false);
@@ -380,10 +380,6 @@ void drawScoreBoard(bool all) {
 
   }
   else {
-
-    arduboy.drawCompressedMirror(-1, 0, digit_Cross, WHITE, false);
-    arduboy.drawCompressedMirror(4, 0, digits[dead / 10], WHITE, false);
-    arduboy.drawCompressedMirror(9, 0, digits[dead % 10], WHITE, false);
 
     arduboy.drawCompressedMirror(14, 0, digit_Heart, WHITE, false);
     arduboy.drawCompressedMirror(21, 0, digits[safe / 10], WHITE, false);
