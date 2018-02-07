@@ -38,7 +38,7 @@ void render(uint8_t sortie) {
   
   if (sortie > 0) {
   
-    arduboy.drawCompressedMirror(38, 22, reinterpret_cast<const uint8_t *>(&renderSortieLookup[sortie - 1]), WHITE, false);
+    arduboy.drawCompressedMirror(38, 22, reinterpret_cast<const uint8_t *>(pgm_read_word(&renderSortieLookup[sortie - 1])), WHITE, false);
 
   }
   else {
