@@ -1127,7 +1127,7 @@ const uint8_t PROGMEM digit_Heart[] = {
 0x06, 0x07, 0x98, 0x96, 0x4e, 0x3a, 0xe5, 0xe4, 0x5c
 };
 
-const uint8_t* const digits[] = { 
+const uint8_t* const PROGMEM digits[] = { 
 digit_00, digit_01, digit_02, digit_03, digit_04,
 digit_05, digit_06, digit_07, digit_08, digit_09
 };

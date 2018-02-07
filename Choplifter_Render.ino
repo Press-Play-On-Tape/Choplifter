@@ -49,21 +49,9 @@ void render(uint8_t sortie) {
 
       if ((dormitory->xPos > heli.xPos - 144) && (dormitory->xPos < heli.xPos + 144)) {
 
-        const uint8_t * mask = nullptr;
-        const uint8_t * image = nullptr;
+        const uint8_t * mask = (dormitory->state == DormitoryState::Intact) ? dormitory_01_mask : dormitory_02_mask;
+        const uint8_t * image =(dormitory->state == DormitoryState::Intact) ? dormitory_01 : dormitory_02;
       
-        if (dormitory->state == DormitoryState::Intact) {
-
-          mask = dormitory_01_mask;
-          image = dormitory_01;
-
-        }
-        else {
-
-          mask = dormitory_02_mask;
-          image = dormitory_02;
-          
-        }
         arduboy.drawCompressedMirror(heli.xPos - dormitory->xPos + 64 - 15, 40, mask, BLACK, false);
         arduboy.drawCompressedMirror(heli.xPos - dormitory->xPos + 64 - 15, 40, image, WHITE, false);
           
@@ -366,25 +354,25 @@ void drawExplosion(BulletExplosion *bulletExplosion) {
 void drawScoreBoard(bool all) {
 
   arduboy.drawCompressedMirror(-1, 0, digit_Cross, WHITE, false);
-  arduboy.drawCompressedMirror(4, 0, digits[dead / 10], WHITE, false);
-  arduboy.drawCompressedMirror(9, 0, digits[dead % 10], WHITE, false);
+  arduboy.drawCompressedMirror(4, 0, imageArrayLookup(&digits[dead / 10]), WHITE, false);
+  arduboy.drawCompressedMirror(9, 0, imageArrayLookup(&digits[dead % 10]), WHITE, false);
 
   if (all) {
     
     arduboy.drawCompressedMirror(14, 0, digit_Diamond, WHITE, false);
-    arduboy.drawCompressedMirror(21, 0, digits[inHelicopter / 10], WHITE, false);
-    arduboy.drawCompressedMirror(26, 0, digits[inHelicopter % 10], WHITE, false);
+    arduboy.drawCompressedMirror(21, 0, imageArrayLookup(&digits[inHelicopter / 10]), WHITE, false);
+    arduboy.drawCompressedMirror(26, 0, imageArrayLookup(&digits[inHelicopter % 10]), WHITE, false);
     
     arduboy.drawCompressedMirror(31, 0, digit_Heart, WHITE, false);
-    arduboy.drawCompressedMirror(38, 0, digits[safe / 10], WHITE, false);
-    arduboy.drawCompressedMirror(43, 0, digits[safe % 10], WHITE, false);
+    arduboy.drawCompressedMirror(38, 0, imageArrayLookup(&digits[safe / 10]), WHITE, false);
+    arduboy.drawCompressedMirror(43, 0, imageArrayLookup(&digits[safe % 10]), WHITE, false);
 
   }
   else {
 
     arduboy.drawCompressedMirror(14, 0, digit_Heart, WHITE, false);
-    arduboy.drawCompressedMirror(21, 0, digits[safe / 10], WHITE, false);
-    arduboy.drawCompressedMirror(26, 0, digits[safe % 10], WHITE, false);
+    arduboy.drawCompressedMirror(21, 0, imageArrayLookup(&digits[safe / 10]), WHITE, false);
+    arduboy.drawCompressedMirror(26, 0, imageArrayLookup(&digits[safe % 10]), WHITE, false);
 
   }
 
