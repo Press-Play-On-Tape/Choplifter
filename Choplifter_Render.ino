@@ -2,6 +2,19 @@
 #include "Enums.h"
 #include "Images.h"
 
+void drawBullet(const Bullet & bullet)
+{
+    if (bullet.xPos != BULLET_INACTIVE_X_VALUE) {
+  
+        if ((bullet.xPos > heli.xPos - 144) && (bullet.xPos < heli.xPos + 144)) {
+
+          arduboy.fillRect(heli.xPos - bullet.xPos + 64 - 1, bullet.yPos, 2, 2, WHITE);
+
+        }
+    
+    }
+}
+
 const uint8_t * const renderTankLookup[] PROGMEM = {tank_turrent_00,tank_turrent_01,tank_turrent_02,tank_turrent_01,tank_turrent_00};
 
 /* ----------------------------------------------------------------------------
@@ -169,17 +182,7 @@ void render(uint8_t sortie) {
 
     for (int i = 0; i < NUMBER_OF_PLAYER_BULLETS; i++) {
 
-      Bullet *bullet = &playerBullets[i];
-
-      if (bullet->xPos != BULLET_INACTIVE_X_VALUE) {
-  
-        if ((bullet->xPos > heli.xPos - 144) && (bullet->xPos < heli.xPos + 144)) {
-
-          arduboy.fillRect(heli.xPos - bullet->xPos + 64 - 1, bullet->yPos, 2, 2, WHITE);
-
-        }
-    
-      }
+      drawBullet(playerBullets[i]);
 
     }
 
@@ -189,17 +192,7 @@ void render(uint8_t sortie) {
 
     for (int i = 0; i < NUMBER_OF_TANK_BULLETS; i++) {
 
-      Bullet *bullet = &tankBullets[i];
-
-      if (bullet->xPos != BULLET_INACTIVE_X_VALUE) {
-  
-        if ((bullet->xPos > heli.xPos - 144) && (bullet->xPos < heli.xPos + 144)) {
-
-          arduboy.fillRect(heli.xPos - bullet->xPos + 64 - 1, bullet->yPos, 2, 2, WHITE);
-
-        }
-    
-      }
+      drawBullet(tankBullets[i]);
 
     }
 
