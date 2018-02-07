@@ -38,7 +38,7 @@ void render(uint8_t sortie) {
   
   if (sortie > 0) {
   
-    arduboy.drawCompressedMirror(38, 22, reinterpret_cast<const uint8_t *>(pgm_read_word(&renderSortieLookup[sortie - 1])), WHITE, false);
+    arduboy.drawCompressedMirror(38, 22, imageArrayLookup(&renderSortieLookup[sortie - 1]), WHITE, false);
 
   }
   else {
@@ -157,7 +157,7 @@ void render(uint8_t sortie) {
         arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, tank_00_mask, BLACK, false);
         arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, (tank->track ? tank_00 : tank_01), WHITE, false);
 
-        const uint8_t * image = reinterpret_cast<const uint8_t *>(pgm_read_word(&renderTankLookup[(uint8_t)tank->turrentDirection]));
+        const uint8_t * image = imageArrayLookup(&renderTankLookup[(uint8_t)tank->turrentDirection]);
         bool flag = ((uint8_t)tank->turrentDirection < (uint8_t)TurrentDirection::Upright);
 
         arduboy.drawCompressedMirror(heli.xPos - tank->xPos + 64 - 15, 47, image, WHITE, flag);
