@@ -10,7 +10,9 @@ enum class GameState : uint8_t {
   Introduction,
   Sortie,
   PlayGame,
-  GameOver
+  GameOver,
+  SplashScreen_Init,
+  SplashScreen,
 };
 
 enum class TankState : uint8_t {

@@ -45,7 +45,7 @@ void setup() {
   arduboy.initRandomSeed();
 
   resetGame();
-  gameState = GameState::Initialise;
+  gameState = GameState::SplashScreen_Init;
   
 }
 
@@ -62,6 +62,17 @@ void loop() {
 
 
   switch (gameState) {
+
+    case GameState::SplashScreen_Init:
+      splashScreen_Init();
+      splashScreen();
+      arduboy.display(false);
+      break;
+
+    case GameState::SplashScreen:
+      splashScreen();
+      arduboy.display(false);
+      break;
 
     case GameState::Initialise:
       resetGame();
