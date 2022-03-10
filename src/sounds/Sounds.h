@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Arduboy2/Arduboy2.h"
+#include <Arduboy2.h>
 
 const uint16_t rideOfTHeValkyries[] PROGMEM = {
  NOTE_REST,460, NOTE_B4,117, NOTE_REST,187, NOTE_FS4,62, NOTE_REST,7, NOTE_B4,125, NOTE_REST,62, NOTE_D5,515,
